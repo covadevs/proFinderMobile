@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">proFinderMobile</string>
+    <string name="app_name">proFinder</string>
     <string name="proFinder">proFinder</string>
     <string name="login">Login</string>
     <string name="password">Password</string>
