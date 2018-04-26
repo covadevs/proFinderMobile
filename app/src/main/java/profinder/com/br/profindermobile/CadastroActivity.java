@@ -36,7 +36,7 @@ public class CadastroActivity extends AppCompatActivity {
         buttonsignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+
             }
         });
 
