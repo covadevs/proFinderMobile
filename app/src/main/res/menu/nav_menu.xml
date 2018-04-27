@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/meus_projetos"
+        android:title="Meus Projetos">
+
+    </item>
+
+    <item android:id="@+id/ultimos_projetos"
+        android:title="Ultmos Projetos">
+
+    </item>
+
+    <item android:id="@+id/notificacoes"
+        android:title="Notificações">
+
+    </item>
+
+    <item android:id="@+id/sair"
+        android:title="Sair">
+
+    </item>
+</menu>

@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class CadastroProjeto extends AppCompatActivity {
+public class CadastroProjetoActivity extends AppCompatActivity {
 
     private EditText NomeProjeto, AreaProjeto, CoodenadorProjeto, DescricaoProjeto;
     private Button buttonCadProjeto;

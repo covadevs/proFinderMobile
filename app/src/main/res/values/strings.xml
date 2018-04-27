@@ -6,4 +6,7 @@
     <string name="username">Username</string>
     <string name="signin">Sign in</string>
     <string name="title_activity_professor">ProfessorActivity</string>
+
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 </resources>

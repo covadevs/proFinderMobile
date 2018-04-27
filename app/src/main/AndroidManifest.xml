@@ -21,8 +21,8 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/proFinder" />
-        <activity android:name=".CadastroActivity" />
-        <activity android:name=".CadastroProjeto" />
+        <activity android:name=".CadastroUsuarioActivity" />
+        <activity android:name=".CadastroProjetoActivity" />
         <activity
             android:name=".ProfessorActivity"
             android:label="@string/title_activity_professor"
