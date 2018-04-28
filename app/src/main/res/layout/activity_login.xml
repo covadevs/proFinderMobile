@@ -10,61 +10,79 @@
         android:id="@+id/logintexto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="64dp"
+        android:gravity="center"
         android:text="@string/login"
         android:textAlignment="center"
         android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/usuario"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/usuario"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
         android:ems="10"
         android:hint="@string/username"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/senha"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logintexto" />
 
     <EditText
         android:id="@+id/senha"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="64dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="@string/password"
         android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/buttonlogin"
+        app:layout_constraintBottom_toTopOf="@+id/circularProgressButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/usuario" />
 
-    <Button
-        android:id="@+id/buttonlogin"
-        android:layout_width="140dp"
+    <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
+        android:id="@+id/circularProgressButton"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginEnd="128dp"
         android:layout_marginStart="128dp"
-        android:text="@string/signin"
+        android:layout_marginTop="32dp"
+        app:spinning_bar_width="4dp"
+        app:spinning_bar_color="#FFF"
+        app:spinning_bar_padding="6dp"
+        android:background="@color/colorAccent"
+        android:text="Sign in"
+        android:textColor="#FFF"
         app:layout_constraintBottom_toTopOf="@+id/tv_cadastre_se"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/senha" />
+
+    <!--<Button-->
+        <!--android:id="@+id/buttonlogin"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="128dp"-->
+        <!--android:layout_marginStart="128dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:text="@string/signin"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/tv_cadastre_se"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/progressBar" />-->
 
     <TextView
         android:id="@+id/tv_cadastre_se"
@@ -73,26 +91,28 @@
         android:layout_marginBottom="64dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:textAlignment="center"
+        android:layout_marginTop="16dp"
+        android:clickable="true"
+        android:focusable="true"
         android:text="Não tem uma conta? Cadastre-se agora!"
+        android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        android:clickable="true"
-        android:focusable="true"/>
+        app:layout_constraintTop_toBottomOf="@+id/buttonlogin" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="168dp"
-        android:layout_marginStart="168dp"
-        android:layout_marginTop="16dp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/buttonlogin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/senha" />
+    <!--<ProgressBar-->
+        <!--android:id="@+id/progressBar"-->
+        <!--style="?android:attr/progressBarStyle"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="168dp"-->
+        <!--android:layout_marginStart="168dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:visibility="gone"-->
+        <!--app:layout_constraintBottom_toTopOf="@+id/buttonlogin"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/senha" />-->
 </android.support.constraint.ConstraintLayout>

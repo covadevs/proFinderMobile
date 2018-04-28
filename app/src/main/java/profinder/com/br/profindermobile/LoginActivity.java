@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -20,13 +21,15 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
+
 public class LoginActivity extends AppCompatActivity {
     private EditText mUsuario,mSenha;
     private TextView tvSignUp;
     private Button mLogin;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
-    private ProgressBar progressBar;
+    private CircularProgressButton circularProgressButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,17 +37,15 @@ public class LoginActivity extends AppCompatActivity {
         mUsuario = findViewById(R.id.usuario);
         mSenha = findViewById(R.id.senha);
         tvSignUp = findViewById(R.id.tv_cadastre_se);
-        mLogin = findViewById(R.id.buttonlogin);
         mAuth = FirebaseAuth.getInstance();
-        progressBar = findViewById(R.id.progressBar);
-        progressBar.setIndeterminate(true);
+        circularProgressButton = findViewById(R.id.circularProgressButton);
 
-        mLogin.setOnClickListener(new View.OnClickListener() {
+        circularProgressButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(!setError()) {
-                    mLogin.setEnabled(false);
-                    exibirProgressBar(true);
+                    circularProgressButton.startAnimation();
+                    circularProgressButton.setEnabled(false);
                     TarefaLogar logar = new TarefaLogar();
                     logar.execute(mAuth);
                 }
@@ -56,6 +57,7 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(LoginActivity.this, CadastroUsuarioActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -65,14 +67,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         user = mAuth.getCurrentUser();
         if(user != null) {
+            Log.d("onStart", "ENTROU");
             Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
             startActivity(intent);
             finish();
         }
-    }
-
-    private void exibirProgressBar(boolean exibir) {
-        progressBar.setVisibility(exibir ? View.VISIBLE : View.GONE);
     }
 
     private boolean setError() {
@@ -109,8 +108,8 @@ public class LoginActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        exibirProgressBar(false);
-                        mLogin.setEnabled(true);
+                        circularProgressButton.revertAnimation();
+                        circularProgressButton.setEnabled(true);
                         Toast.makeText(LoginActivity.this, "Authentication failed.",
                                 Toast.LENGTH_SHORT).show();
                     }
