@@ -130,20 +130,15 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
                                 if(task.isSuccessful()) {
-                                    mAuth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-                                        @Override
-                                        public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                                            user = mAuth.getCurrentUser();
-                                            if(user != null) {
-                                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                                        .setDisplayName(mNome.getText().toString()).build();
-                                                user.updateProfile(profileUpdates);
-                                                Intent intent = new Intent(CadastroUsuarioActivity.this, LoginActivity.class);
-                                                startActivity(intent);
-                                                finish();
-                                            }
-                                        }
-                                    });
+                                    user = mAuth.getCurrentUser();
+                                    if(user != null) {
+                                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                .setDisplayName(mNome.getText().toString()).build();
+                                        user.updateProfile(profileUpdates);
+                                        Intent intent = new Intent(CadastroUsuarioActivity.this, LoginActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
                                 } else {
                                     Toast.makeText(CadastroUsuarioActivity.this, "Authentication failed.",
                                             Toast.LENGTH_SHORT).show();

@@ -65,24 +65,11 @@
         app:spinning_bar_padding="6dp"
         android:background="@color/colorAccent"
         android:text="Sign in"
-        android:textColor="#FFF"
+        android:textColor="@color/md_white_1000"
         app:layout_constraintBottom_toTopOf="@+id/tv_cadastre_se"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/senha" />
-
-    <!--<Button-->
-        <!--android:id="@+id/buttonlogin"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginEnd="128dp"-->
-        <!--android:layout_marginStart="128dp"-->
-        <!--android:layout_marginTop="16dp"-->
-        <!--android:text="@string/signin"-->
-        <!--app:layout_constraintBottom_toTopOf="@+id/tv_cadastre_se"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/progressBar" />-->
 
     <TextView
         android:id="@+id/tv_cadastre_se"
@@ -100,7 +87,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonlogin" />
+        app:layout_constraintTop_toBottomOf="@+id/circularProgressButton" />
 
     <!--<ProgressBar-->
         <!--android:id="@+id/progressBar"-->

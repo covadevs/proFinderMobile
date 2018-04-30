@@ -9,7 +9,6 @@ public class Usuario {
     private String senha;
     private String matricula;
     private String type;
-    private Map<String, Projeto> projetos;
 
     public Usuario() {}
 
@@ -19,7 +18,6 @@ public class Usuario {
         this.senha = senha;
         this.matricula = matricula;
         this.type = type;
-        this.projetos = new HashMap<>();
     }
 
     public String getNome() {
@@ -60,14 +58,6 @@ public class Usuario {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public Map<String, Projeto> getProjetos() {
-        return projetos;
-    }
-
-    public void setProjetos(Map<String, Projeto> projetos) {
-        this.projetos = projetos;
     }
 
     @Override

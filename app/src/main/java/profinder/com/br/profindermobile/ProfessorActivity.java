@@ -3,6 +3,7 @@ package profinder.com.br.profindermobile;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.PersistableBundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
@@ -41,6 +44,7 @@ public class ProfessorActivity extends AppCompatActivity {
     private FirebaseUser user;
     private AccountHeader accountHeader;
     private Drawer result;
+    private boolean duploBackParaSair;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +53,13 @@ public class ProfessorActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         this.mAuth = FirebaseAuth.getInstance();
+        this.duploBackParaSair = false;
 
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Meus Projetos");
-        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName("Sair");
+        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName("Ultimos Projetos").withIcon(GoogleMaterial.Icon.gmd_public);
+        SecondaryDrawerItem item3 = new SecondaryDrawerItem().withIdentifier(3).withName("Notificações").withIcon(GoogleMaterial.Icon.gmd_notifications);
+        SecondaryDrawerItem item4 = new SecondaryDrawerItem().withIdentifier(4).withName("Sair");
+
 
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
@@ -71,36 +79,42 @@ public class ProfessorActivity extends AppCompatActivity {
                 .withInnerShadow(true)
                 .withAccountHeader(accountHeader)
                 .addDrawerItems(
-                        item1.withIcon(GoogleMaterial.Icon.gmd_inbox).withSelectable(false),
-                        new SecondaryDrawerItem().withName("Ultimos Projetos").withIcon(GoogleMaterial.Icon.gmd_public).withSelectable(false),
-                        new DividerDrawerItem().withSelectable(false),
-                        new SecondaryDrawerItem().withName("Notificações").withIcon(GoogleMaterial.Icon.gmd_notifications).withSelectable(false),
-                        new DividerDrawerItem().withSelectable(false),
-                        item2.withIcon(GoogleMaterial.Icon.gmd_exit_to_app).withSelectable(false)
+                        item1.withIcon(GoogleMaterial.Icon.gmd_inbox),
+                        item2,
+                        new DividerDrawerItem(),
+                        item3,
+                        new DividerDrawerItem(),
+                        item4.withIcon(GoogleMaterial.Icon.gmd_exit_to_app)
                 ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
-                        if(drawerItem.getIdentifier() == 2) {
-                            mAuth.signOut();
-                            Intent intent = new Intent(ProfessorActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                            finish();
+                        switch ((int)drawerItem.getIdentifier()){
+                            case 1:
+                                break;
+                            case 2:
+                                break;
+                            case 3:
+                                break;
+                            case 4:
+                                mAuth.signOut();
+                                Intent intent = new Intent(ProfessorActivity.this, LoginActivity.class);
+                                startActivity(intent);
+                                finish();
+                                break;
                         }
                         return false;
                     }
                 })
-                .withSelectedItem(-1)
                 .build();
-
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(ProfessorActivity.this, CadastroProjetoActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -110,7 +124,14 @@ public class ProfessorActivity extends AppCompatActivity {
         super.onStart();
         this.user = mAuth.getCurrentUser();
         if(user != null) {
-            updateUI(user);
+            user.reload().addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()) {
+                        updateUI(user);
+                    }
+                }
+            });
         } else {
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
@@ -118,9 +139,31 @@ public class ProfessorActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if(duploBackParaSair) {
+            super.onBackPressed();
+            return;
+        }
+
+        if(result.isDrawerOpen()) {
+            result.closeDrawer();
+        }
+
+        duploBackParaSair = true;
+        Toast.makeText(this, "Toque novamente em voltar para sair", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                duploBackParaSair = false;
+            }
+        }, 2000);
+    }
+
     private void updateUI(FirebaseUser user) {
-        accountHeader.addProfiles(
-                new ProfileDrawerItem().withName(user.getDisplayName()).withEmail(user.getEmail()).withIcon(getResources().getDrawable(R.drawable.profile, null))
+        accountHeader.addProfile(
+                new ProfileDrawerItem().withName(user.getDisplayName()).withEmail(user.getEmail()).withIcon(getResources().getDrawable(R.drawable.profile, null)), 0
         );
     }
 }
