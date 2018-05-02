@@ -2,9 +2,13 @@ package profinder.com.br.profindermobile;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.EditText;
@@ -42,6 +46,47 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cadastro_usuario);
 
+        initComponentes();
+        onClicks();
+        listeners();
+    }
+
+    private void listeners() {
+        mRetypesenha.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if(!charSequence.toString().equals(mSenha.getText().toString())) {
+                    mRetypesenha.setError("Senha não confere");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
+    private void onClicks() {
+        buttonsignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(!setError()) {
+                    buttonsignup.startAnimation();
+                    buttonsignup.setEnabled(false);
+                    TarefaCadastrarUsuario tarefaCadastrarUsuario = new TarefaCadastrarUsuario();
+                    tarefaCadastrarUsuario.execute(mAuth);
+                }
+            }
+        });
+    }
+
+    private void initComponentes() {
         mNome = findViewById(R.id.nome);
         mEmail = findViewById(R.id.email);
         mSenha = findViewById(R.id.senha);
@@ -54,21 +99,8 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         radioButtonAluno = findViewById(R.id.radioButtonAluno);
 
         buttonsignup = findViewById(R.id.circularProgressButton2);
-
-        this.db = FirebaseFirestore.getInstance();
-        this.mAuth = FirebaseAuth.getInstance();
-
-        buttonsignup.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(!setError()) {
-                    buttonsignup.startAnimation();
-                    buttonsignup.setEnabled(false);
-                    TarefaCadastrarUsuario tarefaCadastrarUsuario = new TarefaCadastrarUsuario();
-                    tarefaCadastrarUsuario.execute(mAuth);
-                }
-            }
-        });
+        db = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     private boolean setError() {
@@ -134,19 +166,39 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                                     if(user != null) {
                                         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                                 .setDisplayName(mNome.getText().toString()).build();
-                                        user.updateProfile(profileUpdates);
-                                        Intent intent = new Intent(CadastroUsuarioActivity.this, LoginActivity.class);
-                                        startActivity(intent);
-                                        finish();
+                                        user.updateProfile(profileUpdates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()) {
+                                                    user.reload();
+                                                    user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if(task.isSuccessful()) {
+                                                                Snackbar.make(findViewById(R.id.cadastro_usuario_layout), "Email de verificação enviado.", Snackbar.LENGTH_LONG).show();
+                                                                new Handler().postDelayed(new Runnable() {
+                                                                    @Override
+                                                                    public void run() {
+                                                                        Intent intent = new Intent(CadastroUsuarioActivity.this, LoginActivity.class);
+                                                                        startActivity(intent);
+                                                                        finish();
+                                                                    }
+                                                                }, 2000);
+                                                            }
+                                                        }
+                                                    });
+                                                }
+                                            }
+                                        });
                                     }
                                 } else {
-                                    Toast.makeText(CadastroUsuarioActivity.this, "Authentication failed.",
+                                    Toast.makeText(CadastroUsuarioActivity.this, "Falha ao adicionar usuario ao banco de dados.",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });
                     } else {
-                        Toast.makeText(CadastroUsuarioActivity.this, "Authentication failed.",
+                        Toast.makeText(CadastroUsuarioActivity.this, "Falha ao cadastrar usuário.",
                                 Toast.LENGTH_SHORT).show();
                         buttonsignup.revertAnimation();
                         buttonsignup.setEnabled(true);

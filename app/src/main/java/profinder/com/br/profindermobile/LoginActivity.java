@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Parcel;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -36,12 +37,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        mUsuario = findViewById(R.id.usuario);
-        mSenha = findViewById(R.id.senha);
-        tvSignUp = findViewById(R.id.tv_cadastre_se);
-        mAuth = FirebaseAuth.getInstance();
-        circularProgressButton = findViewById(R.id.circularProgressButton);
+        initComponentes();
+        onClicks();
+    }
 
+    private void onClicks() {
         circularProgressButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -64,15 +64,21 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
+    private void initComponentes() {
+        mUsuario = findViewById(R.id.usuario);
+        mSenha = findViewById(R.id.senha);
+        tvSignUp = findViewById(R.id.tv_cadastre_se);
+        mAuth = FirebaseAuth.getInstance();
+        circularProgressButton = findViewById(R.id.circularProgressButton);
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
         user = mAuth.getCurrentUser();
-        if(user != null) {
-            Log.d("onStart", "ENTROU");
+        if(user != null && user.isEmailVerified()) {
             Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
             startActivity(intent);
-            finish();
         }
     }
 
@@ -97,7 +103,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     class TarefaLogar extends AsyncTask<FirebaseAuth, Void, Void> {
-
+        private Snackbar snackbar;
 
         @Override
         protected Void doInBackground(FirebaseAuth... firebaseAuths) {
@@ -106,9 +112,23 @@ public class LoginActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()) {
                         user = mAuth.getCurrentUser();
-                        Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
-                        startActivity(intent);
-                        finish();
+                        if(user.isEmailVerified()) {
+                            Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            circularProgressButton.revertAnimation();
+                            circularProgressButton.setEnabled(true);
+                            snackbar = Snackbar.make(findViewById(R.id.login_layout), "Email não verificado", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Reenviar", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            user.sendEmailVerification();
+                                            snackbar.dismiss();
+                                        }
+                                    });
+                            snackbar.show();
+                        }
                     } else {
                         circularProgressButton.revertAnimation();
                         circularProgressButton.setEnabled(true);
