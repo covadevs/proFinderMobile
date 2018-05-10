@@ -41,6 +41,7 @@ public class MeusProjetosFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private ProgressBar progressBar;
+    private CarregarProjetos carregarProjetos;
 
     public MeusProjetosFragment() {
         // Required empty public constructor
@@ -61,6 +62,8 @@ public class MeusProjetosFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
 
+        carregarProjetos = new CarregarProjetos();
+
         progressBar = getView().findViewById(R.id.progressBarListaProjetos);
         recyclerView = getView().findViewById(R.id.lista_projetos);
 
@@ -70,16 +73,18 @@ public class MeusProjetosFragment extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         recyclerView.setAdapter(mAdapter);
+
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                CarregarProjetos carregarProjetos = new CarregarProjetos();
-                carregarProjetos.execute();
+                if(carregarProjetos.getStatus() == AsyncTask.Status.PENDING) {
+                    carregarProjetos.execute();
+                }
             }
         });
     }
 
-    public class CarregarProjetos extends AsyncTask<Void, Void, Void> {
+    class CarregarProjetos extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {

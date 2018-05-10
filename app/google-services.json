@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "908271568278-90269l24t8sggkj31rb049ha90mv287p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "profinder.com.br.profindermobile",
+            "certificate_hash": "c8753ef7596ad359015c6e6d6cca81dd04eb3d2f"
+          }
+        },
+        {
           "client_id": "908271568278-csicba2l4cekpptfvvtuusmqiilf2r33.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

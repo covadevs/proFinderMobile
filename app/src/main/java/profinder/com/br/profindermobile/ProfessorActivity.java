@@ -2,6 +2,9 @@ package profinder.com.br.profindermobile;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PersistableBundle;
@@ -15,6 +18,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,10 +27,18 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.esafirm.imagepicker.features.ImagePicker;
+import com.esafirm.imagepicker.model.Image;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -40,12 +52,17 @@ import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+import java.io.File;
+import java.io.IOException;
+
 public class ProfessorActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseUser user;
     private AccountHeader accountHeader;
     private Drawer result;
     private boolean duploBackParaSair;
+    private FirebaseStorage mStorage;
+    private boolean isAlive;
 
     private FragmentManager fragmentManager;
 
@@ -57,6 +74,7 @@ public class ProfessorActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         this.mAuth = FirebaseAuth.getInstance();
         this.duploBackParaSair = false;
+        this.isAlive = false;
 
         PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Meus Projetos");
         SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName("Ultimos Projetos").withIcon(GoogleMaterial.Icon.gmd_public);
@@ -71,6 +89,22 @@ public class ProfessorActivity extends AppCompatActivity {
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                }).withOnAccountHeaderProfileImageListener(new AccountHeader.OnAccountHeaderProfileImageListener() {
+                    @Override
+                    public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onProfileImageLongClick(View view, IProfile profile, boolean current) {
+                        ImagePicker.create(ProfessorActivity.this)
+                                .folderMode(true)
+                                .toolbarFolderTitle("Imagens")
+                                .toolbarImageTitle("Toque para selecionar")
+                                .single()
+                                .start();
                         return false;
                     }
                 }).build();
@@ -134,23 +168,66 @@ public class ProfessorActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
-        super.onStart();
-        this.user = mAuth.getCurrentUser();
-        if(user != null) {
-            user.reload().addOnCompleteListener(new OnCompleteListener<Void>() {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(ImagePicker.shouldHandle(requestCode, resultCode, data)) {
+            Image image = ImagePicker.getFirstImageOrNull(data);
+            mStorage = FirebaseStorage.getInstance();
+            StorageReference uploadImage = mStorage.getReference("profile/"+user.getUid()+".jpge");
+            Uri file = Uri.fromFile(new File(image.getPath()));
+            uploadImage.putFile(file).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
+                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
                     if(task.isSuccessful()) {
-                        updateUI(user);
+                        StorageReference downloadImage = mStorage.getReference("profile/"+user.getUid()+".jpge");
+                        try {
+                            final File img = File.createTempFile("profile", "jpge");
+                            downloadImage.getFile(img).addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                                    if(task.isSuccessful()) {
+                                        Bitmap bitmap = BitmapFactory.decodeFile(img.getAbsolutePath());
+                                        accountHeader.getActiveProfile().withIcon(bitmap);
+                                        accountHeader.updateProfile(accountHeader.getActiveProfile());
+                                    }
+                                }
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });
-        } else {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-            finish();
+
         }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(!this.isAlive) {
+            this.user = mAuth.getCurrentUser();
+            if (user != null) {
+                user.reload().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            updateUI(user);
+                        }
+                    }
+                });
+            } else {
+                Intent intent = new Intent(this, LoginActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        this.isAlive = true;
     }
 
     @Override
