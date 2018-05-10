@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -46,6 +47,8 @@ public class ProfessorActivity extends AppCompatActivity {
     private Drawer result;
     private boolean duploBackParaSair;
 
+    private FragmentManager fragmentManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,7 +79,6 @@ public class ProfessorActivity extends AppCompatActivity {
         result = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
-                .withInnerShadow(true)
                 .withAccountHeader(accountHeader)
                 .addDrawerItems(
                         item1.withIcon(GoogleMaterial.Icon.gmd_inbox),
@@ -90,8 +92,20 @@ public class ProfessorActivity extends AppCompatActivity {
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
                         switch ((int)drawerItem.getIdentifier()){
                             case 1:
+                                setTitle("Meus Projetos");
+                                MeusProjetosFragment meusProjetosFragment = new MeusProjetosFragment();
+                                fragmentManager = getSupportFragmentManager();
+                                fragmentManager.beginTransaction()
+                                        .replace(R.id.framelayout, meusProjetosFragment)
+                                        .commit();
                                 break;
                             case 2:
+                                setTitle("Ultimos Projetos");
+                                UltimosProjetosFragment ultimosProjetosFragment = new UltimosProjetosFragment();
+                                fragmentManager = getSupportFragmentManager();
+                                fragmentManager.beginTransaction()
+                                        .replace(R.id.framelayout, ultimosProjetosFragment)
+                                        .commit();
                                 break;
                             case 3:
                                 break;

@@ -18,11 +18,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 
@@ -32,7 +36,11 @@ public class LoginActivity extends AppCompatActivity {
     private Button mLogin;
     private FirebaseAuth mAuth;
     private FirebaseUser user;
+    private FirebaseFirestore fs;
+    private DocumentReference dr;
     private CircularProgressButton circularProgressButton;
+    private Usuario usuario;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +78,7 @@ public class LoginActivity extends AppCompatActivity {
         tvSignUp = findViewById(R.id.tv_cadastre_se);
         mAuth = FirebaseAuth.getInstance();
         circularProgressButton = findViewById(R.id.circularProgressButton);
+        fs = FirebaseFirestore.getInstance();
     }
 
     @Override
@@ -113,9 +122,18 @@ public class LoginActivity extends AppCompatActivity {
                     if (task.isSuccessful()) {
                         user = mAuth.getCurrentUser();
                         if(user.isEmailVerified()) {
-                            Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
-                            startActivity(intent);
-                            finish();
+                            dr = fs.collection("users").document(user.getUid());
+                            dr.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                @Override
+                                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                                    usuario = documentSnapshot.toObject(Usuario.class);
+                                    if(usuario.getType().equals("professor")) {
+                                        Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                }
+                            });
                         } else {
                             circularProgressButton.revertAnimation();
                             circularProgressButton.setEnabled(true);
