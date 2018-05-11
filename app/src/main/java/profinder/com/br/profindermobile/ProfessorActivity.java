@@ -51,6 +51,8 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +65,7 @@ public class ProfessorActivity extends AppCompatActivity {
     private boolean duploBackParaSair;
     private FirebaseStorage mStorage;
     private boolean isAlive;
+    private Bitmap profilePic;
 
     private FragmentManager fragmentManager;
 
@@ -98,13 +101,12 @@ public class ProfessorActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public boolean onProfileImageLongClick(View view, IProfile profile, boolean current) {
-                        ImagePicker.create(ProfessorActivity.this)
-                                .folderMode(true)
-                                .toolbarFolderTitle("Imagens")
-                                .toolbarImageTitle("Toque para selecionar")
-                                .single()
-                                .start();
+                    public boolean onProfileImageLongClick(View view, IProfile profile, boolean current) { ;
+                        CropImage.activity()
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .setFixAspectRatio(true)
+                                .setCropShape(CropImageView.CropShape.OVAL)
+                                .start(ProfessorActivity.this);
                         return false;
                     }
                 }).build();
@@ -169,37 +171,48 @@ public class ProfessorActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(ImagePicker.shouldHandle(requestCode, resultCode, data)) {
-            Image image = ImagePicker.getFirstImageOrNull(data);
-            mStorage = FirebaseStorage.getInstance();
-            StorageReference uploadImage = mStorage.getReference("profile/"+user.getUid()+".jpge");
-            Uri file = Uri.fromFile(new File(image.getPath()));
-            uploadImage.putFile(file).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                    if(task.isSuccessful()) {
-                        StorageReference downloadImage = mStorage.getReference("profile/"+user.getUid()+".jpge");
-                        try {
-                            final File img = File.createTempFile("profile", "jpge");
-                            downloadImage.getFile(img).addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
-                                    if(task.isSuccessful()) {
-                                        Bitmap bitmap = BitmapFactory.decodeFile(img.getAbsolutePath());
-                                        accountHeader.getActiveProfile().withIcon(bitmap);
-                                        accountHeader.updateProfile(accountHeader.getActiveProfile());
-                                    }
-                                }
-                            });
-                        } catch (IOException e) {
-                            e.printStackTrace();
+        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if(resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                mStorage = FirebaseStorage.getInstance();
+                StorageReference uploadImage = mStorage.getReference("profile/"+user.getUid());
+                uploadImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            downloadProfilePic();
                         }
                     }
-                }
-            });
-
+                });
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
         }
+
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void downloadProfilePic() {
+            mStorage = FirebaseStorage.getInstance();
+            StorageReference downloadImage = mStorage.getReference("profile/" + user.getUid());
+            try {
+                final File img = File.createTempFile("profile", "jpge");
+                downloadImage.getFile(img).addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            profilePic = BitmapFactory.decodeFile(img.getPath());
+                            accountHeader.removeProfile(0);
+                            accountHeader.addProfile(
+                                    new ProfileDrawerItem().withName(user.getDisplayName()).withEmail(user.getEmail()).withIcon(profilePic), 0
+                            );
+                        }
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
     }
 
     @Override
@@ -253,8 +266,6 @@ public class ProfessorActivity extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser user) {
-        accountHeader.addProfile(
-                new ProfileDrawerItem().withName(user.getDisplayName()).withEmail(user.getEmail()).withIcon(getResources().getDrawable(R.drawable.profile, null)), 0
-        );
+        downloadProfilePic();
     }
 }
