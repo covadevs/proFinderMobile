@@ -16,7 +16,7 @@
         android:gravity="center"
         android:text="@string/proFinder"
         android:textAlignment="center"
-        android:textColor="@color/accent"
+        android:textColor="@color/md_white_1000"
         android:textSize="60sp"
         android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"

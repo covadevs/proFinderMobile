@@ -1,15 +1,8 @@
 <resources>
     <string name="app_name">proFinder</string>
     <string name="proFinder">pro<b>Finder</b></string>
-    <string name="login">LOGIN</string>
-    <string name="password">Password</string>
-    <string name="username">Username</string>
-    <string name="signin">Sign in</string>
     <string name="title_activity_professor">ProfessorActivity</string>
-
-    <string name="open">Open</string>
-    <string name="close">Close</string>
+    <string name="entrar"><b>Entrar</b></string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

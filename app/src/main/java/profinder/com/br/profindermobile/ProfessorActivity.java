@@ -3,6 +3,8 @@ package profinder.com.br.profindermobile;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,6 +19,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -47,6 +50,8 @@ public class ProfessorActivity extends AppCompatActivity {
     private FirebaseStorage mStorage;
     private boolean isAlive;
     private Bitmap profilePic;
+    private Bitmap backgroundPic;
+    private boolean isBackgroundUpload;
 
     private FragmentManager fragmentManager;
 
@@ -59,6 +64,7 @@ public class ProfessorActivity extends AppCompatActivity {
         this.mAuth = FirebaseAuth.getInstance();
         this.duploBackParaSair = false;
         this.isAlive = false;
+        this.isBackgroundUpload = false;
 
         setTitle("Meus Projetos");
         MeusProjetosFragment meusProjetosFragment = new MeusProjetosFragment();
@@ -67,15 +73,48 @@ public class ProfessorActivity extends AppCompatActivity {
                 .replace(R.id.framelayout, meusProjetosFragment)
                 .commit();
 
-        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Meus Projetos");
-        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName("Ultimos Projetos").withIcon(GoogleMaterial.Icon.gmd_public);
-        SecondaryDrawerItem item3 = new SecondaryDrawerItem().withIdentifier(3).withName("Notificações").withIcon(GoogleMaterial.Icon.gmd_notifications);
-        SecondaryDrawerItem item4 = new SecondaryDrawerItem().withIdentifier(4).withName("Sair");
+        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Meus Projetos")
+                .withTextColor(getResources().getColor(R.color.md_white_1000))
+                .withSelectedTextColor(getResources().getColor(R.color.md_white_1000))
+                .withSelectedColor(getResources().getColor(R.color.colorPrimaryDark))
+                .withSelectedIconColor(getResources().getColor(R.color.md_white_1000))
+                .withIconColor(getResources().getColor(R.color.md_white_1000));
+        SecondaryDrawerItem item2 = new SecondaryDrawerItem().withIdentifier(2).withName("Ultimos Projetos").withIcon(GoogleMaterial.Icon.gmd_public)
+                .withTextColor(getResources().getColor(R.color.md_white_1000))
+                .withSelectedTextColor(getResources().getColor(R.color.md_white_1000))
+                .withSelectedColor(getResources().getColor(R.color.colorPrimaryDark))
+                .withSelectedIconColor(getResources().getColor(R.color.md_white_1000))
+                .withIconColor(getResources().getColor(R.color.md_white_1000));
+        SecondaryDrawerItem item3 = new SecondaryDrawerItem().withIdentifier(3).withName("Notificações").withIcon(GoogleMaterial.Icon.gmd_notifications)
+                .withTextColor(getResources().getColor(R.color.md_white_1000))
+                .withSelectedTextColor(getResources().getColor(R.color.md_white_1000))
+                .withSelectedColor(getResources().getColor(R.color.colorPrimaryDark))
+                .withSelectedIconColor(getResources().getColor(R.color.md_white_1000))
+                .withIconColor(getResources().getColor(R.color.md_white_1000));
+        SecondaryDrawerItem item4 = new SecondaryDrawerItem().withIdentifier(4).withName("Sair")
+                .withTextColor(getResources().getColor(R.color.md_white_1000))
+                .withSelectedTextColor(getResources().getColor(R.color.md_white_1000))
+                .withSelectedColor(getResources().getColor(R.color.colorPrimaryDark))
+                .withSelectedIconColor(getResources().getColor(R.color.md_white_1000))
+                .withIconColor(getResources().getColor(R.color.md_white_1000));
 
 
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
                 .withSelectionListEnabledForSingleProfile(false)
+                .withOnAccountHeaderSelectionViewClickListener(new AccountHeader.OnAccountHeaderSelectionViewClickListener() {
+                    @Override
+                    public boolean onClick(View view, IProfile profile) {
+                        isBackgroundUpload = true;
+                        CropImage.activity()
+                                .setGuidelines(CropImageView.Guidelines.ON)
+                                .setFixAspectRatio(true)
+                                .setAspectRatio(16,9)
+                                .setAutoZoomEnabled(true)
+                                .start(ProfessorActivity.this);
+                        return false;
+                    }
+                })
                 .withHeaderBackground(getResources().getDrawable(R.drawable.profilebackground, null))
                 .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
@@ -103,6 +142,7 @@ public class ProfessorActivity extends AppCompatActivity {
         result = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(toolbar)
+                .withSliderBackgroundColor(getResources().getColor(R.color.colorPrimary))
                 .withAccountHeader(accountHeader)
                 .addDrawerItems(
                         item1.withIcon(GoogleMaterial.Icon.gmd_inbox),
@@ -159,26 +199,61 @@ public class ProfessorActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE){
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if(resultCode == RESULT_OK) {
+            if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
                 mStorage = FirebaseStorage.getInstance();
-                StorageReference uploadImage = mStorage.getReference("profile/"+user.getUid());
-                uploadImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if(task.isSuccessful()) {
-                            downloadProfilePic();
+                StorageReference uploadImage;
+                if(isBackgroundUpload) {
+                    isBackgroundUpload = false;
+                    uploadImage = mStorage.getReference("background/"+user.getUid());
+                    uploadImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            if(task.isSuccessful()) {
+                                downloadBackgroundPic();
+                            }
                         }
-                    }
-                });
+                    });
+                } else {
+                    uploadImage = mStorage.getReference("profile/" + user.getUid());
+                    uploadImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                downloadProfilePic();
+                            }
+                        }
+                    });
+                }
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
         }
 
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void downloadBackgroundPic() {
+        mStorage = FirebaseStorage.getInstance();
+        final StorageReference downloadImage = mStorage.getReference("background/" + user.getUid());
+
+        try {
+            final File img = File.createTempFile("background", "jpge");
+            downloadImage.getFile(img).addOnCompleteListener(new OnCompleteListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<FileDownloadTask.TaskSnapshot> task) {
+                    if(task.isSuccessful()) {
+                        backgroundPic = BitmapFactory.decodeFile(img.getPath());
+                        Drawable drawable = new BitmapDrawable(getResources(), backgroundPic);
+                        accountHeader.setBackground(drawable);
+                    }
+                }
+            });
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void downloadProfilePic() {
@@ -261,5 +336,6 @@ public class ProfessorActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user) {
         downloadProfilePic();
+        downloadBackgroundPic();
     }
 }

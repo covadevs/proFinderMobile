@@ -57,8 +57,6 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull final MaterialDialog dialog, @NonNull DialogAction which) {
-                        holder.mDeletar.setEnabled(false);
-                        holder.mEditar.setEnabled(false);
                         FirebaseFirestore fs = FirebaseFirestore.getInstance();
                         fs.collection("projects").document(projeto.getId()).delete()
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -71,8 +69,6 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
                                         Toast.makeText(dialog.getContext(), "Falha ao deletar projeto.", Toast.LENGTH_SHORT)
                                                 .show();
                                     }
-                                    holder.mDeletar.setEnabled(true);
-                                    holder.mEditar.setEnabled(true);
                                 }
                             });
                     }

@@ -22,6 +22,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.shawnlin.numberpicker.NumberPicker;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 import br.com.simplepass.loading_button_lib.interfaces.OnAnimationEndListener;
@@ -29,7 +30,7 @@ import br.com.simplepass.loading_button_lib.interfaces.OnAnimationEndListener;
 public class CadastroProjetoActivity extends AppCompatActivity {
 
     private EditText NomeProjeto, AreaProjeto, CoodenadorProjeto, DescricaoProjeto;
-    private SeekBar QtdAlunosProjeto;
+    private NumberPicker qntVagas;
     private CircularProgressButton circularProgressButton;
     private FirebaseFirestore db;
 
@@ -46,7 +47,7 @@ public class CadastroProjetoActivity extends AppCompatActivity {
         CoodenadorProjeto = findViewById(R.id.CoodenadorProjeto);
         DescricaoProjeto = findViewById(R.id.DescricaoProjeto);
 
-        QtdAlunosProjeto = findViewById(R.id.QtdAlunosProjeto);
+        qntVagas = findViewById(R.id.QtdAlunosProjeto);
         circularProgressButton = findViewById(R.id.circularProgressButton3);
 
         this.db = FirebaseFirestore.getInstance();
@@ -64,7 +65,7 @@ public class CadastroProjetoActivity extends AppCompatActivity {
                     projeto.setArea(AreaProjeto.getText().toString());
                     projeto.setCoordenador(CoodenadorProjeto.getText().toString());
                     projeto.setDescricao(DescricaoProjeto.getText().toString());
-                    projeto.setQntAlunos(QtdAlunosProjeto.getProgress());
+                    projeto.setQntAlunos(qntVagas.getValue());
                     TarefaCadastrarProjeto tarefaCadastrarProjeto = new TarefaCadastrarProjeto();
                     tarefaCadastrarProjeto.execute(projeto);
                 }

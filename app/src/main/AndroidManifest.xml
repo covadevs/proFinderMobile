@@ -21,22 +21,32 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/proFinder"
-            android:theme="@style/apptheme"/>
-        <activity android:name=".CadastroUsuarioActivity" />
-        <activity android:name=".CadastroProjetoActivity" android:windowSoftInputMode="adjustPan" />
+            android:theme="@style/apptheme" />
+        <activity
+            android:theme="@style/apptheme"
+            android:name=".CadastroUsuarioActivity" />
+        <activity
+            android:name=".CadastroProjetoActivity"
+            android:theme="@style/apptheme" />
         <activity
             android:name=".ProfessorActivity"
             android:label="@string/title_activity_professor"
             android:theme="@style/AppTheme.NoActionBar">
 
         </activity>
-        
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"/>
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
 
         <meta-data
             android:name="preloaded_fonts"
             android:resource="@array/preloaded_fonts" />
+
+        <activity
+            android:theme="@style/apptheme"
+            android:name=".EditarProjetoActivity">
+
+        </activity>
     </application>
 
 </manifest>
