@@ -1,6 +1,7 @@
 package profinder.com.br.profindermobile;
 
 class Projeto {
+    private String id;
     private String UID;
     private String nome;
     private String area;
@@ -56,6 +57,14 @@ class Projeto {
 
     public void setUID(String UID) {
         this.UID = UID;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override

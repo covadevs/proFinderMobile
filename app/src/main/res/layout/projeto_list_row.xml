@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
@@ -19,31 +20,79 @@
         android:id="@+id/titulo_projeto"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:padding="10dp"
         android:text="Nome do Projeto"
         android:textSize="15sp"
-        android:padding="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/editarProjeto"
         app:layout_constraintStart_toEndOf="@+id/img_projeto"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <mehdi.sakout.fancybuttons.FancyButton
         android:id="@+id/img_projeto"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/material_drawer_circle_mask" />
+        app:srcCompat="@drawable/material_drawer_circle_mask"
+        fancy:fb_text="Logo"
+        fancy:fb_defaultColor="@color/md_grey_900"
+        fancy:fb_focusColor="@color/md_green_700"
+        fancy:fb_radius="50dp"/>
+
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/editarProjeto"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/deletarProjeto"
+        app:layout_constraintStart_toEndOf="@+id/titulo_projeto"
+        app:layout_constraintTop_toTopOf="parent"
+        fancy:fb_text=""
+        fancy:fb_defaultColor="@color/md_green_400"
+        fancy:fb_focusColor="@color/md_green_800"
+        fancy:fb_radius="50dp" />
+
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/deletarProjeto"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editarProjeto"
+        app:layout_constraintTop_toTopOf="parent"
+        fancy:fb_text=""
+        fancy:fb_defaultColor="@color/md_red_400"
+        fancy:fb_focusColor="@color/md_red_800"
+        fancy:fb_radius="50dp" />
+    <!--<ImageButton-->
+        <!--android:id="@+id/editarProjeto"-->
+        <!--android:layout_width="30dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toStartOf="@+id/deletarProjeto"-->
+        <!--app:layout_constraintStart_toEndOf="@+id/titulo_projeto"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--android:background="@drawable/roundededitimagebutton"-->
+        <!--app:srcCompat="@drawable/shape_default" />-->
+
+    <!--<ImageButton-->
+        <!--android:id="@+id/deletarProjeto"-->
+        <!--android:layout_width="30dp"-->
+        <!--android:layout_height="30dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toEndOf="@+id/editarProjeto"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--android:background="@drawable/roundeddeleteimagebutton"-->
+        <!--app:srcCompat="@drawable/shape_default" />-->
 
 
 </android.support.constraint.ConstraintLayout>

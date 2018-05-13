@@ -21,7 +21,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -41,7 +43,7 @@ public class MeusProjetosFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private ProgressBar progressBar;
-    private CarregarProjetos carregarProjetos;
+//    private CarregarProjetos carregarProjetos;
 
     public MeusProjetosFragment() {
         // Required empty public constructor
@@ -62,7 +64,7 @@ public class MeusProjetosFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
 
-        carregarProjetos = new CarregarProjetos();
+//        carregarProjetos = new CarregarProjetos();
 
         progressBar = getView().findViewById(R.id.progressBarListaProjetos);
         recyclerView = getView().findViewById(R.id.lista_projetos);
@@ -74,57 +76,85 @@ public class MeusProjetosFragment extends Fragment {
 
         recyclerView.setAdapter(mAdapter);
 
-        getActivity().runOnUiThread(new Runnable() {
+//        getActivity().runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if(carregarProjetos.getStatus() == AsyncTask.Status.PENDING) {
+//                    carregarProjetos.execute();
+//                }
+//            }
+//        });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        fs.collection("projects").whereEqualTo("uid", mUser.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void run() {
-                if(carregarProjetos.getStatus() == AsyncTask.Status.PENDING) {
-                    carregarProjetos.execute();
+            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots,
+                                @javax.annotation.Nullable FirebaseFirestoreException e) {
+                if(e != null) {
+                    return;
                 }
+
+                projetos.clear();
+                for(QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Projeto p = new Projeto();
+                    p.setNome(doc.getString("nome"));
+                    p.setArea(doc.getString("area"));
+                    p.setCoordenador(doc.getString("coordenador"));
+                    p.setQntAlunos(doc.getLong("qntAlunos").intValue());
+                    p.setDescricao(doc.getString("descricao"));
+                    p.setUID(doc.getString("uid"));
+                    p.setId(doc.getId());
+                    projetos.add(p);
+                }
+
+                mAdapter.notifyDataSetChanged();
             }
         });
+
     }
 
-    class CarregarProjetos extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            prepareProjectData();
-            return null;
-        }
-    }
-
-    private void prepareProjectData() {
-        progressBar.setVisibility(View.VISIBLE);
-        recyclerView.setEnabled(false);
-        if(mUser != null) {
-            fs.collection("projects")
-                    .whereEqualTo("uid", mUser.getUid())
-                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if(task.isSuccessful()) {
-                                for(QueryDocumentSnapshot document: task.getResult()) {
-                                    Projeto projeto = document.toObject(Projeto.class);
-                                    projetos.add(projeto);
-                                }
-
-                                mAdapter.notifyDataSetChanged();
-                                progressBar.setVisibility(View.GONE);
-                                recyclerView.setEnabled(true);
-                            } else {
-                                progressBar.setVisibility(View.GONE);
-                                recyclerView.setEnabled(true);
-                                Snackbar.make(getView(), "Falha ao recuperar projetos", Snackbar.LENGTH_INDEFINITE)
-                                        .setAction("Tentar novamente", new View.OnClickListener() {
-                                            @Override
-                                            public void onClick(View view) {
-                                                prepareProjectData();
-                                            }
-                                        });
-                            }
-                        }
-                    });
-        }
-    }
-
+//    class CarregarProjetos extends AsyncTask<Void, Void, Void> {
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            prepareProjectData();
+//            return null;
+//        }
+//    }
+//
+//    private void prepareProjectData() {
+//        progressBar.setVisibility(View.VISIBLE);
+//        recyclerView.setEnabled(false);
+//        if(mUser != null) {
+//            fs.collection("projects")
+//                    .whereEqualTo("uid", mUser.getUid())
+//                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                        @Override
+//                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                            if(task.isSuccessful()) {
+//                                for(QueryDocumentSnapshot document: task.getResult()) {
+//                                    Projeto projeto = document.toObject(Projeto.class);
+//                                    projetos.add(projeto);
+//                                }
+//
+//                                progressBar.setVisibility(View.GONE);
+//                                recyclerView.setEnabled(true);
+//                            } else {
+//                                progressBar.setVisibility(View.GONE);
+//                                recyclerView.setEnabled(true);
+//                                Snackbar.make(getView(), "Falha ao recuperar projetos", Snackbar.LENGTH_INDEFINITE)
+//                                        .setAction("Tentar novamente", new View.OnClickListener() {
+//                                            @Override
+//                                            public void onClick(View view) {
+//                                                prepareProjectData();
+//                                            }
+//                                        });
+//                            }
+//                        }
+//                    });
+//        }
+//    }
 }

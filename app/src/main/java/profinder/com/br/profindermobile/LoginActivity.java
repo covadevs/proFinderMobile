@@ -28,6 +28,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.novoda.merlin.Merlin;
+import com.novoda.merlin.registerable.connection.Connectable;
+import com.novoda.merlin.registerable.disconnection.Disconnectable;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 
@@ -41,6 +44,9 @@ public class LoginActivity extends AppCompatActivity {
     private DocumentReference dr;
     private CircularProgressButton circularProgressButton;
     private Usuario usuario;
+    private Merlin merlin;
+    private boolean conectado;
+    private Snackbar snackbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,17 +54,39 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         initComponentes();
         onClicks();
+
+        merlin.registerConnectable(new Connectable() {
+            @Override
+            public void onConnect() {
+                if(!conectado) {
+                    snackbar = Snackbar.make(findViewById(R.id.login_layout), "Com conexão", Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                }
+                conectado = true;
+            }
+        });
+
+        merlin.registerDisconnectable(new Disconnectable() {
+            @Override
+            public void onDisconnect() {
+                conectado = false;
+                snackbar = Snackbar.make(findViewById(R.id.login_layout), "Sem conexão", Snackbar.LENGTH_INDEFINITE);
+                snackbar.show();
+            }
+        });
     }
 
     private void onClicks() {
         circularProgressButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!setError()) {
-                    circularProgressButton.startAnimation();
-                    circularProgressButton.setEnabled(false);
-                    TarefaLogar logar = new TarefaLogar();
-                    logar.execute(mAuth);
+                if(conectado) {
+                    if (!setError()) {
+                        circularProgressButton.startAnimation();
+                        circularProgressButton.setEnabled(false);
+                        TarefaLogar logar = new TarefaLogar();
+                        logar.execute(mAuth);
+                    }
                 }
             }
         });
@@ -74,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initComponentes() {
+        merlin = new Merlin.Builder().withAllCallbacks().build(this);
         FirebaseApp.initializeApp(this);
         mUsuario = findViewById(R.id.usuario);
         mSenha = findViewById(R.id.senha);
@@ -81,6 +110,18 @@ public class LoginActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         circularProgressButton = findViewById(R.id.circularProgressButton);
         fs = FirebaseFirestore.getInstance();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        merlin.bind();
+    }
+
+    @Override
+    protected void onPause() {
+        merlin.unbind();
+        super.onPause();
     }
 
     @Override

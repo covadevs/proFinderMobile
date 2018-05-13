@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#424242</color>
     <color name="colorPrimaryDark">#212121</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">@color/md_orange_700</color>
     <color name="year">#999999</color>
     <color name="title">#222222</color>
 </resources>
