@@ -23,17 +23,15 @@
             android:label="@string/proFinder"
             android:theme="@style/apptheme" />
         <activity
-            android:theme="@style/apptheme"
-            android:name=".CadastroUsuarioActivity" />
+            android:name=".CadastroUsuarioActivity"
+            android:theme="@style/apptheme" />
         <activity
             android:name=".CadastroProjetoActivity"
             android:theme="@style/apptheme" />
         <activity
             android:name=".ProfessorActivity"
             android:label="@string/title_activity_professor"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
@@ -43,8 +41,13 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
+            android:name=".EditarProjetoActivity"
+            android:theme="@style/apptheme">
+
+        </activity>
+        <activity
             android:theme="@style/apptheme"
-            android:name=".EditarProjetoActivity">
+            android:name=".ConfiguracoesActivity">
 
         </activity>
     </application>

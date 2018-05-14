@@ -19,7 +19,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -97,7 +96,12 @@ public class ProfessorActivity extends AppCompatActivity {
                 .withSelectedColor(getResources().getColor(R.color.colorPrimaryDark))
                 .withSelectedIconColor(getResources().getColor(R.color.md_white_1000))
                 .withIconColor(getResources().getColor(R.color.md_white_1000));
-
+        SecondaryDrawerItem item5 = new SecondaryDrawerItem().withIdentifier(5).withName("Configurações")
+                .withTextColor(getResources().getColor(R.color.md_white_1000))
+                .withSelectedTextColor(getResources().getColor(R.color.md_white_1000))
+                .withSelectedColor(getResources().getColor(R.color.colorPrimaryDark))
+                .withSelectedIconColor(getResources().getColor(R.color.md_white_1000))
+                .withIconColor(getResources().getColor(R.color.md_white_1000));
 
         accountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
@@ -116,12 +120,7 @@ public class ProfessorActivity extends AppCompatActivity {
                     }
                 })
                 .withHeaderBackground(getResources().getDrawable(R.drawable.profilebackground, null))
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        return false;
-                    }
-                }).withOnAccountHeaderProfileImageListener(new AccountHeader.OnAccountHeaderProfileImageListener() {
+                .withOnAccountHeaderProfileImageListener(new AccountHeader.OnAccountHeaderProfileImageListener() {
                     @Override
                     public boolean onProfileImageClick(View view, IProfile profile, boolean current) {
                         return false;
@@ -149,6 +148,7 @@ public class ProfessorActivity extends AppCompatActivity {
                         item2,
                         new DividerDrawerItem(),
                         item3,
+                        item5.withIcon(GoogleMaterial.Icon.gmd_settings),
                         new DividerDrawerItem(),
                         item4.withIcon(GoogleMaterial.Icon.gmd_exit_to_app)
                 ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
@@ -172,13 +172,23 @@ public class ProfessorActivity extends AppCompatActivity {
                                         .commit();
                                 break;
                             case 3:
+                                setTitle("Notificações");
+                                NotificacaoFragment notificacaoFragment = new NotificacaoFragment();
+                                fragmentManager = getSupportFragmentManager();
+                                fragmentManager.beginTransaction()
+                                        .replace(R.id.framelayout, notificacaoFragment)
+                                        .commit();
                                 break;
                             case 4:
                                 mAuth.signOut();
-                                Intent intent = new Intent(ProfessorActivity.this, LoginActivity.class);
-                                startActivity(intent);
+                                Intent intentLogin = new Intent(ProfessorActivity.this, LoginActivity.class);
+                                startActivity(intentLogin);
                                 finish();
                                 break;
+                            case 5:
+                                Intent intentConf = new Intent(ProfessorActivity.this, ConfiguracoesActivity.class);
+                                startActivity(intentConf);
+                                finish();
                         }
                         return false;
                     }

@@ -1,18 +1,13 @@
 package profinder.com.br.profindermobile;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.SeekBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,11 +16,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.shawnlin.numberpicker.NumberPicker;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
-import br.com.simplepass.loading_button_lib.interfaces.OnAnimationEndListener;
 
 public class CadastroProjetoActivity extends AppCompatActivity {
 
@@ -48,7 +41,7 @@ public class CadastroProjetoActivity extends AppCompatActivity {
         DescricaoProjeto = findViewById(R.id.DescricaoProjeto);
 
         qntVagas = findViewById(R.id.QtdAlunosProjeto);
-        circularProgressButton = findViewById(R.id.circularProgressButton3);
+        circularProgressButton = findViewById(R.id.cadastrarProjeto);
 
         this.db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();

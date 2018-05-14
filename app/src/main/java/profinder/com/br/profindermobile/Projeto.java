@@ -1,6 +1,8 @@
 package profinder.com.br.profindermobile;
 
-class Projeto {
+import java.io.Serializable;
+
+class Projeto implements Serializable {
     private String id;
     private String UID;
     private String nome;

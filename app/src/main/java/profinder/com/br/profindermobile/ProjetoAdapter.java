@@ -1,18 +1,13 @@
 package profinder.com.br.profindermobile;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.Icon;
 import android.support.annotation.NonNull;
-import android.support.design.widget.BaseTransientBottomBar;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,39 +44,13 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
     public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
         final Projeto projeto = projetos.get(position);
         holder.titulo.setText(projeto.getNome());
-        materialDialog = new MaterialDialog.Builder(holder.itemView.getContext())
-                .title("Deletar projeto")
-                .positiveText("Sim")
-                .negativeText("Não")
-                .content("Deseja realmente deletar o "+projeto.getNome()+"?")
-                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull final MaterialDialog dialog, @NonNull DialogAction which) {
-                        FirebaseFirestore fs = FirebaseFirestore.getInstance();
-                        fs.collection("projects").document(projeto.getId()).delete()
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()) {
-                                        Toast.makeText(dialog.getContext(), "Projeto deletado com sucesso", Toast.LENGTH_SHORT)
-                                                .show();
-                                    } else {
-                                        Toast.makeText(dialog.getContext(), "Falha ao deletar projeto.", Toast.LENGTH_SHORT)
-                                                .show();
-                                    }
-                                }
-                            });
-                    }
-                }).onNegative(new MaterialDialog.SingleButtonCallback() {
-                    @Override
-                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        dialog.dismiss();
-                    }
-                }).build();
 
         holder.mEditar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent = new Intent(holder.itemView.getContext(), EditarProjetoActivity.class);
+                intent.putExtra("projeto", projeto);
+                holder.itemView.getContext().startActivity(intent);
 
             }
         });
@@ -89,6 +58,35 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
         holder.mDeletar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                materialDialog = new MaterialDialog.Builder(holder.itemView.getContext())
+                        .title("Deletar projeto")
+                        .positiveText("Sim")
+                        .negativeText("Não")
+                        .content("Deseja realmente deletar o "+projeto.getNome()+"?")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull final MaterialDialog dialog, @NonNull DialogAction which) {
+                                FirebaseFirestore fs = FirebaseFirestore.getInstance();
+                                fs.collection("projects").document(projeto.getId()).delete()
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                            @Override
+                                            public void onComplete(@NonNull Task<Void> task) {
+                                                if(task.isSuccessful()) {
+                                                    Toast.makeText(dialog.getContext(), "Projeto deletado com sucesso", Toast.LENGTH_SHORT)
+                                                            .show();
+                                                } else {
+                                                    Toast.makeText(dialog.getContext(), "Falha ao deletar projeto.", Toast.LENGTH_SHORT)
+                                                            .show();
+                                                }
+                                            }
+                                        });
+                            }
+                        }).onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                dialog.dismiss();
+                            }
+                        }).build();
                 materialDialog.show();
             }
         });
