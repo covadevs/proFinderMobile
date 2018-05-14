@@ -14,11 +14,12 @@
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp"
         android:background="@color/colorPrimary"
-        android:text="Cadastro do Usuário"
         android:padding="5dp"
+        android:text="Cadastro do Usuário"
         android:textAlignment="center"
         android:textColor="@color/md_white_1000"
-        android:textSize="30sp"
+        android:textSize="28sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/nome"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +56,7 @@
         android:layout_marginTop="16dp"
         android:background="@color/md_white_1000"
         android:ems="10"
-        android:hint="Email"
+        android:hint="E-mail"
         android:inputType="textEmailAddress"
         android:paddingBottom="10dp"
         android:paddingLeft="20dp"
@@ -101,7 +102,7 @@
         android:layout_marginTop="16dp"
         android:background="@color/md_white_1000"
         android:ems="10"
-        android:hint="Redigite sua senha"
+        android:hint="Confirme sua senha"
         android:inputType="textPassword"
         android:paddingBottom="10dp"
         android:paddingLeft="20dp"
@@ -159,7 +160,8 @@
             android:layout_weight="1"
             android:checked="true"
             android:text="Professor"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
 
         <RadioButton
             android:id="@+id/radioButtonAluno"
@@ -167,7 +169,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="Aluno"
-            android:textColor="#ffffff" />
+            android:textColor="#ffffff"
+            android:textStyle="bold" />
     </RadioGroup>
 
     <br.com.simplepass.loading_button_lib.customViews.CircularProgressButton
@@ -182,6 +185,7 @@
         android:fontFamily="@font/roboto_light"
         android:text="Cadatrar"
         android:textColor="@color/md_white_1000"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
