@@ -66,7 +66,7 @@ public class ConfiguracoesActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()) {
                             FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification();
-                            snackbar = Snackbar.make(findViewById(R.id.configsLayout), "Verifique seu novo email.", Snackbar.LENGTH_LONG);
+                            snackbar = Snackbar.make(findViewById(R.id.configsLayout), "Verifique seu novo e-mail.", Snackbar.LENGTH_LONG);
                             snackbar.show();
                         } else {
                             snackbar = Snackbar.make(findViewById(R.id.configsLayout), "Falha ao trocar e-mail.", Snackbar.LENGTH_LONG);

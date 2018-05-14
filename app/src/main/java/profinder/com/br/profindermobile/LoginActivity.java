@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onConnect() {
                 if(!conectado) {
-                    snackbar = Snackbar.make(findViewById(R.id.login_layout), "Com conexão", Snackbar.LENGTH_SHORT);
+                    snackbar = Snackbar.make(findViewById(R.id.login_layout), "BD Conectado", Snackbar.LENGTH_SHORT);
                     snackbar.show();
                 }
                 conectado = true;
@@ -66,7 +66,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onDisconnect() {
                 conectado = false;
-                snackbar = Snackbar.make(findViewById(R.id.login_layout), "Sem conexão", Snackbar.LENGTH_INDEFINITE);
+                snackbar = Snackbar.make(findViewById(R.id.login_layout), "Falha na conexão", Snackbar.LENGTH_INDEFINITE);
                 snackbar.show();
             }
         });
@@ -138,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if(!Patterns.EMAIL_ADDRESS.matcher(mUsuario.getText()).matches() && !TextUtils.isEmpty(mUsuario.getText())) {
-            mUsuario.setError("Email inválido");
+            mUsuario.setError("E-mail inválido");
             vazio = true;
         }
 
@@ -176,8 +176,8 @@ public class LoginActivity extends AppCompatActivity {
                         } else {
                             circularProgressButton.revertAnimation();
                             circularProgressButton.setEnabled(true);
-                            snackbar = Snackbar.make(findViewById(R.id.login_layout), "Email não verificado", Snackbar.LENGTH_INDEFINITE)
-                                    .setAction("Reenviar", new View.OnClickListener() {
+                            snackbar = Snackbar.make(findViewById(R.id.login_layout), "E-mail não verificado", Snackbar.LENGTH_INDEFINITE)
+                                    .setAction("Reenviar e-mail", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {
                                             user.sendEmailVerification();
@@ -189,7 +189,7 @@ public class LoginActivity extends AppCompatActivity {
                     } else {
                         circularProgressButton.revertAnimation();
                         circularProgressButton.setEnabled(true);
-                        Toast.makeText(LoginActivity.this, "Authentication failed.",
+                        Toast.makeText(LoginActivity.this, "Falha na autenticação.",
                                 Toast.LENGTH_SHORT).show();
                     }
                 }

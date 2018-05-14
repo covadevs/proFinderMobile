@@ -131,7 +131,7 @@ public class CadastroProjetoActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(CadastroProjetoActivity.this, "Create project failed.",
+                        Toast.makeText(CadastroProjetoActivity.this, "Falha na criação do projeto.",
                                 Toast.LENGTH_SHORT).show();
                         circularProgressButton.revertAnimation();
                         circularProgressButton.setEnabled(true);

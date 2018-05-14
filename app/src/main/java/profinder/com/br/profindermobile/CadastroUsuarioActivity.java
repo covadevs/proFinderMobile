@@ -113,7 +113,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
         if(mEmail.getText().toString().isEmpty()) {
             mEmail.setError("Campo vazio!");
         } else if(!Patterns.EMAIL_ADDRESS.matcher(mEmail.getText()).matches()) {
-            mEmail.setError("Email inválido!");
+            mEmail.setError("E-mail inválido!");
             vazio = true;
         }
 
@@ -175,7 +175,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             if(task.isSuccessful()) {
-                                                                Snackbar.make(findViewById(R.id.cadastro_usuario_layout), "Email de verificação enviado.", Snackbar.LENGTH_LONG).show();
+                                                                Snackbar.make(findViewById(R.id.cadastro_usuario_layout), "Link de verificação enviado ao seu e-mail.", Snackbar.LENGTH_LONG).show();
                                                                 new Handler().postDelayed(new Runnable() {
                                                                     @Override
                                                                     public void run() {
@@ -192,7 +192,7 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
                                         });
                                     }
                                 } else {
-                                    Toast.makeText(CadastroUsuarioActivity.this, "Falha ao adicionar usuario ao banco de dados.",
+                                    Toast.makeText(CadastroUsuarioActivity.this, "Falha ao adicionar usuário ao banco de dados.",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             }

@@ -59,10 +59,10 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
             @Override
             public void onClick(View view) {
                 materialDialog = new MaterialDialog.Builder(holder.itemView.getContext())
-                        .title("Deletar projeto")
+                        .title("Remover projeto")
                         .positiveText("Sim")
                         .negativeText("Não")
-                        .content("Deseja realmente deletar o "+projeto.getNome()+"?")
+                        .content("Deseja realmente remover o "+projeto.getNome()+"?")
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull final MaterialDialog dialog, @NonNull DialogAction which) {
@@ -72,10 +72,10 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
                                             @Override
                                             public void onComplete(@NonNull Task<Void> task) {
                                                 if(task.isSuccessful()) {
-                                                    Toast.makeText(dialog.getContext(), "Projeto deletado com sucesso", Toast.LENGTH_SHORT)
+                                                    Toast.makeText(dialog.getContext(), "Projeto excluido com sucesso", Toast.LENGTH_SHORT)
                                                             .show();
                                                 } else {
-                                                    Toast.makeText(dialog.getContext(), "Falha ao deletar projeto.", Toast.LENGTH_SHORT)
+                                                    Toast.makeText(dialog.getContext(), "Falha ao remover o projeto.", Toast.LENGTH_SHORT)
                                                             .show();
                                                 }
                                             }
