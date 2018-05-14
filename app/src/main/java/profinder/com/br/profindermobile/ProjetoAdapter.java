@@ -62,7 +62,7 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
                         .title("Remover projeto")
                         .positiveText("Sim")
                         .negativeText("Não")
-                        .content("Deseja realmente remover o "+projeto.getNome()+"?")
+                        .content("Deseja realmente remover "+projeto.getNome()+"?")
                         .onPositive(new MaterialDialog.SingleButtonCallback() {
                             @Override
                             public void onClick(@NonNull final MaterialDialog dialog, @NonNull DialogAction which) {
