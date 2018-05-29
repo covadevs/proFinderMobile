@@ -11,7 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -24,26 +24,20 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.LinkedList;
 import java.util.List;
 
-import profinder.com.br.profindermobile.Projeto;
-import profinder.com.br.profindermobile.ProjetoAdapter;
-import profinder.com.br.profindermobile.R;
-
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MeusProjetosFragment extends Fragment {
-    private List<Projeto> projetos = new LinkedList<>();
+public class BuscarPerfilAlunoFragment extends Fragment {
+    private List<Usuario> usuarios = new LinkedList<>();
     private RecyclerView recyclerView;
-    private ProjetoAdapter mAdapter;
+    private UsuarioAdapter mAdapter;
     private FirebaseFirestore fs;
     private DocumentReference dr;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
-    private ProgressBar progressBar;
-//    private CarregarProjetos carregarProjetos;
 
-    public MeusProjetosFragment() {
+    public BuscarPerfilAlunoFragment() {
         // Required empty public constructor
     }
 
@@ -51,8 +45,8 @@ public class MeusProjetosFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_meus_projetos, container, false);
-        return view;
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_buscar_perfil, container, false);
     }
 
     @Override
@@ -61,78 +55,61 @@ public class MeusProjetosFragment extends Fragment {
         fs = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
-
-//        carregarProjetos = new CarregarProjetos();
-
-        progressBar = getView().findViewById(R.id.progressBarListaProjetos);
-        recyclerView = getView().findViewById(R.id.lista_projetos);
-
-        mAdapter = new ProjetoAdapter(projetos);
+        recyclerView = getView().findViewById(R.id.lista_alunos);
+        mAdapter = new UsuarioAdapter(usuarios);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         recyclerView.setAdapter(mAdapter);
-
-//        getActivity().runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if(carregarProjetos.getStatus() == AsyncTask.Status.PENDING) {
-//                    carregarProjetos.execute();
-//                }
-//            }
-//        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        fs.collection("projects").whereEqualTo("uid", mUser.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        fs.collection("users").whereEqualTo("type", "aluno").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots,
                                 @javax.annotation.Nullable FirebaseFirestoreException e) {
-                if(e != null) {
+                if (e != null) {
                     return;
                 }
 
-                projetos.clear();
-                for(QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Projeto p = new Projeto();
-                    p.setNome(doc.getString("nome"));
-                    p.setArea(doc.getString("area"));
-                    p.setCoordenador(doc.getString("coordenador"));
-                    p.setQntAlunos(doc.getLong("qntAlunos").intValue());
-                    p.setDescricao(doc.getString("descricao"));
-                    p.setUID(doc.getString("uid"));
-                    p.setId(doc.getId());
-                    projetos.add(p);
+                usuarios.clear();
+                for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                    Usuario u = new Usuario();
+                    u.setNome(doc.getString("nome"));
+                    u.setEmail(doc.getString("email"));
+                    u.setType(doc.getString("type"));
+                    u.setMatricula(doc.getString("matricula"));
+                    usuarios.add(u);
                 }
 
                 mAdapter.notifyDataSetChanged();
+
             }
         });
-
     }
 
-    public List<Projeto> getProjetos() {
-        return projetos;
+    public List<Usuario> getUsuarios() {
+        return usuarios;
     }
 
-    public void setProjetos(List<Projeto> projetos) {
-        this.projetos = projetos;
+    public void setUsuarios(List<Usuario> usuarios) {
+        this.usuarios = usuarios;
     }
 
-    public ProjetoAdapter getmAdapter() {
+    public UsuarioAdapter getmAdapter() {
         return mAdapter;
     }
 
-    public void setmAdapter(ProjetoAdapter mAdapter) {
+    public void setmAdapter(UsuarioAdapter mAdapter) {
         this.mAdapter = mAdapter;
     }
 
-    public void setRecyclerViewList(List<Projeto> projetos) {
-        ProjetoAdapter projetoAdapter = new ProjetoAdapter(projetos);
-        recyclerView.setAdapter(projetoAdapter);
+    public void setRecyclerViewList(List<Usuario> usuarios) {
+        UsuarioAdapter usuarioAdapter = new UsuarioAdapter(usuarios);
+        recyclerView.setAdapter(usuarioAdapter);
         mAdapter.notifyDataSetChanged();
     }
 }

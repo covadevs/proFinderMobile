@@ -8,4 +8,11 @@
     tools:context=".ProfessorActivity"
     tools:showIn="@layout/activity_professor">
 
+    <FrameLayout
+        android:id="@+id/framelayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+    </FrameLayout>
+
 </android.support.constraint.ConstraintLayout>

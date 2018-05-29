@@ -1,6 +1,7 @@
 package profinder.com.br.profindermobile;
 
-
+import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,7 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -24,35 +25,24 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.LinkedList;
 import java.util.List;
 
-import profinder.com.br.profindermobile.Projeto;
-import profinder.com.br.profindermobile.ProjetoAdapter;
-import profinder.com.br.profindermobile.R;
-
-
-/**
- * A simple {@link Fragment} subclass.
- */
-public class MeusProjetosFragment extends Fragment {
+public class BuscaProjetosFragment extends Fragment {
     private List<Projeto> projetos = new LinkedList<>();
     private RecyclerView recyclerView;
-    private ProjetoAdapter mAdapter;
+    private ProjetoBuscarAdapter mAdapter;
     private FirebaseFirestore fs;
     private DocumentReference dr;
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
-    private ProgressBar progressBar;
-//    private CarregarProjetos carregarProjetos;
 
-    public MeusProjetosFragment() {
+    public BuscaProjetosFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_meus_projetos, container, false);
-        return view;
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_busca_projetos, container, false);
     }
 
     @Override
@@ -62,32 +52,20 @@ public class MeusProjetosFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mUser = mAuth.getCurrentUser();
 
-//        carregarProjetos = new CarregarProjetos();
+        recyclerView = getView().findViewById(R.id.lista_projetos_buscar);
 
-        progressBar = getView().findViewById(R.id.progressBarListaProjetos);
-        recyclerView = getView().findViewById(R.id.lista_projetos);
-
-        mAdapter = new ProjetoAdapter(projetos);
+        mAdapter = new ProjetoBuscarAdapter(projetos);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity().getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         recyclerView.setAdapter(mAdapter);
-
-//        getActivity().runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if(carregarProjetos.getStatus() == AsyncTask.Status.PENDING) {
-//                    carregarProjetos.execute();
-//                }
-//            }
-//        });
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        fs.collection("projects").whereEqualTo("uid", mUser.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+        fs.collection("projects").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots,
                                 @javax.annotation.Nullable FirebaseFirestoreException e) {
@@ -103,15 +81,12 @@ public class MeusProjetosFragment extends Fragment {
                     p.setCoordenador(doc.getString("coordenador"));
                     p.setQntAlunos(doc.getLong("qntAlunos").intValue());
                     p.setDescricao(doc.getString("descricao"));
-                    p.setUID(doc.getString("uid"));
-                    p.setId(doc.getId());
                     projetos.add(p);
                 }
 
                 mAdapter.notifyDataSetChanged();
             }
         });
-
     }
 
     public List<Projeto> getProjetos() {
@@ -122,16 +97,16 @@ public class MeusProjetosFragment extends Fragment {
         this.projetos = projetos;
     }
 
-    public ProjetoAdapter getmAdapter() {
+    public ProjetoBuscarAdapter getmAdapter() {
         return mAdapter;
     }
 
-    public void setmAdapter(ProjetoAdapter mAdapter) {
+    public void setmAdapter(ProjetoBuscarAdapter mAdapter) {
         this.mAdapter = mAdapter;
     }
 
     public void setRecyclerViewList(List<Projeto> projetos) {
-        ProjetoAdapter projetoAdapter = new ProjetoAdapter(projetos);
+        ProjetoBuscarAdapter projetoAdapter = new ProjetoBuscarAdapter(projetos);
         recyclerView.setAdapter(projetoAdapter);
         mAdapter.notifyDataSetChanged();
     }

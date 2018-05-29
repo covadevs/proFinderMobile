@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/row_padding_vertical"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/row_padding_vertical">
+
+
+    <TextView
+        android:id="@+id/titulo_projeto_buscar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="16dp"
+        android:padding="10dp"
+        android:text="Nome do Projeto"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toTopOf="@+id/textView6"
+        app:layout_constraintEnd_toStartOf="@+id/info_projeto"
+        app:layout_constraintStart_toEndOf="@+id/img_projeto_buscar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/img_projeto_buscar"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/material_drawer_circle_mask"
+        fancy:fb_defaultColor="@color/md_grey_900"
+        fancy:fb_focusColor="@color/md_green_700"
+        fancy:fb_radius="50dp"
+        fancy:fb_text="Logo" />
+
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/info_projeto"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/titulo_projeto_buscar"
+        app:layout_constraintTop_toTopOf="parent"
+        fancy:fb_defaultColor="@color/md_yellow_500"
+        fancy:fb_focusColor="@color/md_yellow_800"
+        fancy:fb_radius="50dp"
+        fancy:fb_text="" />
+
+    <TextView
+        android:id="@+id/nome_coordenador"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="2dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="Coordenador(a)"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/info_projeto"
+        app:layout_constraintStart_toEndOf="@+id/img_projeto_buscar"
+        app:layout_constraintTop_toBottomOf="@+id/titulo_projeto_buscar" />
+
+</android.support.constraint.ConstraintLayout>

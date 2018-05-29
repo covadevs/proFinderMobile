@@ -8,13 +8,19 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,6 +29,7 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.materialdrawer.AccountHeader;
 import com.mikepenz.materialdrawer.AccountHeaderBuilder;
@@ -37,6 +44,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -51,8 +59,12 @@ public class ProfessorActivity extends AppCompatActivity {
     private Bitmap profilePic;
     private Bitmap backgroundPic;
     private boolean isBackgroundUpload;
+    private MaterialSearchView materialSearchView;
 
     private FragmentManager fragmentManager;
+    private final MeusProjetosFragment meusProjetosFragment = new MeusProjetosFragment();
+    private final UltimosProjetosFragment ultimosProjetosFragment = new UltimosProjetosFragment();
+    private final NotificacaoFragment notificacaoFragment = new NotificacaoFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +72,14 @@ public class ProfessorActivity extends AppCompatActivity {
         setContentView(R.layout.activity_professor);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        materialSearchView = findViewById(R.id.search_view);
+        searchViewListener();
         this.mAuth = FirebaseAuth.getInstance();
         this.duploBackParaSair = false;
         this.isAlive = false;
         this.isBackgroundUpload = false;
 
         setTitle("Meus Projetos");
-        MeusProjetosFragment meusProjetosFragment = new MeusProjetosFragment();
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.framelayout, meusProjetosFragment)
@@ -157,7 +170,6 @@ public class ProfessorActivity extends AppCompatActivity {
                         switch ((int)drawerItem.getIdentifier()){
                             case 1:
                                 setTitle("Meus Projetos");
-                                MeusProjetosFragment meusProjetosFragment = new MeusProjetosFragment();
                                 fragmentManager = getSupportFragmentManager();
                                 fragmentManager.beginTransaction()
                                         .replace(R.id.framelayout, meusProjetosFragment)
@@ -165,7 +177,6 @@ public class ProfessorActivity extends AppCompatActivity {
                                 break;
                             case 2:
                                 setTitle("Ultimos Projetos");
-                                UltimosProjetosFragment ultimosProjetosFragment = new UltimosProjetosFragment();
                                 fragmentManager = getSupportFragmentManager();
                                 fragmentManager.beginTransaction()
                                         .replace(R.id.framelayout, ultimosProjetosFragment)
@@ -173,7 +184,6 @@ public class ProfessorActivity extends AppCompatActivity {
                                 break;
                             case 3:
                                 setTitle("Notificações");
-                                NotificacaoFragment notificacaoFragment = new NotificacaoFragment();
                                 fragmentManager = getSupportFragmentManager();
                                 fragmentManager.beginTransaction()
                                         .replace(R.id.framelayout, notificacaoFragment)
@@ -208,41 +218,64 @@ public class ProfessorActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.search_menu, menu);
+
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        materialSearchView.setMenuItem(menuItem);
+        return true;
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {
                 Uri resultUri = result.getUri();
-                mStorage = FirebaseStorage.getInstance();
-                StorageReference uploadImage;
-                if(isBackgroundUpload) {
-                    isBackgroundUpload = false;
-                    uploadImage = mStorage.getReference("background/"+user.getUid());
-                    uploadImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            if(task.isSuccessful()) {
-                                downloadBackgroundPic();
-                            }
-                        }
-                    });
-                } else {
-                    uploadImage = mStorage.getReference("profile/" + user.getUid());
-                    uploadImage.putFile(resultUri).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                downloadProfilePic();
-                            }
-                        }
-                    });
-                }
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                Exception error = result.getError();
-            }
-        }
+                try {
+                    Bitmap uriToBitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), resultUri);
+                    Bitmap bitmapDonwload, bitmapProfile;
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    if(isBackgroundUpload) {
+                        bitmapDonwload = uriToBitmap;
+                        bitmapDonwload.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    } else {
+                        bitmapProfile = Bitmap.createScaledBitmap(uriToBitmap, 100, 100, true);
+                        bitmapProfile.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    }
 
-        super.onActivityResult(requestCode, resultCode, data);
+                    byte[] bytes = baos.toByteArray();
+                    mStorage = FirebaseStorage.getInstance();
+                    StorageReference uploadImage;
+                    if (isBackgroundUpload) {
+                        isBackgroundUpload = false;
+                        uploadImage = mStorage.getReference("background/" + user.getUid());
+                        uploadImage.putBytes(bytes).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    downloadBackgroundPic();
+                                }
+                            }
+                        });
+                    } else {
+                        uploadImage = mStorage.getReference("profile/" + user.getUid());
+                        uploadImage.putBytes(bytes).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    downloadProfilePic();
+                                }
+                            }
+                        });
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     private void downloadBackgroundPic() {
@@ -297,6 +330,7 @@ public class ProfessorActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        materialSearchView.closeSearch();
         if(!this.isAlive) {
             this.user = mAuth.getCurrentUser();
             if (user != null) {
@@ -324,6 +358,10 @@ public class ProfessorActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if(materialSearchView.isSearchOpen()) {
+            materialSearchView.closeSearch();
+        }
+
         if(duploBackParaSair) {
             super.onBackPressed();
             return;
@@ -347,5 +385,24 @@ public class ProfessorActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser user) {
         downloadProfilePic();
         downloadBackgroundPic();
+    }
+
+    private void searchViewListener() {
+        materialSearchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                materialSearchView.closeSearch();
+                Intent intent = new Intent(ProfessorActivity.this, BuscaAcitvity.class);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                if(meusProjetosFragment.isVisible()) {
+                    meusProjetosFragment.setRecyclerViewList(meusProjetosFragment.getProjetos());
+                }
+            }
+        });
     }
 }
