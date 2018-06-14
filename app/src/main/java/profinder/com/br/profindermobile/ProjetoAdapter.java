@@ -133,6 +133,8 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
                     fs.collection("notifications").add(notificacao).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
+                            fs.collection("notifications").document(documentReference.getId())
+                                    .update("id", documentReference.getId());
                             Toast.makeText(itemView.getContext(), "Inscrição realizada com sucesso", Toast.LENGTH_SHORT).show();
                         }
                     });

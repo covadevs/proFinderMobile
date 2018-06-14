@@ -4,6 +4,7 @@ public class Notificacao {
     private boolean isRead;
     private Projeto projeto;
     private Usuario usuario;
+    private String id;
 
     public Notificacao() {
         this.isRead = false;
@@ -17,14 +18,22 @@ public class Notificacao {
         isRead = read;
     }
 
-
     @Override
     public String toString() {
         return "Notificacao{" +
                 "isRead=" + isRead +
                 ", projeto=" + projeto +
                 ", usuario=" + usuario +
+                ", id='" + id + '\'' +
                 '}';
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public Usuario getUsuario() {

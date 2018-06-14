@@ -8,7 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
 
@@ -19,6 +23,7 @@ import mehdi.sakout.fancybuttons.FancyButton;
 
 public class NotificacaoAdapter extends RecyclerView.Adapter<NotificacaoAdapter.MyViewHolder> {
     private List<Notificacao> noticacoes = new LinkedList<>();
+    private FirebaseFirestore fs;
 
     public NotificacaoAdapter(List<Notificacao> noticacoes) {
         this.noticacoes = noticacoes;
@@ -27,6 +32,7 @@ public class NotificacaoAdapter extends RecyclerView.Adapter<NotificacaoAdapter.
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        fs = FirebaseFirestore.getInstance();
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.notification_row, parent, false);
         return new MyViewHolder(itemView);
@@ -41,14 +47,38 @@ public class NotificacaoAdapter extends RecyclerView.Adapter<NotificacaoAdapter.
         holder.mAceitarAluno.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+                fs.collection("notifications").document(notificacao.getId())
+                        .update("read", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        notificacao.getProjeto().getAlunos().add(notificacao.getUsuario());
+                        notificacao.setRead(true);
+                        fs.collection("notifications").document(notificacao.getId())
+                                .set(notificacao).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                Toast.makeText(view.getContext(), "Aluno adicionado ao projeto!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+                noticacoes.remove(position);
+                notifyDataSetChanged();
             }
         });
 
         holder.mRecusarAluno.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                fs.collection("notifications").document(notificacao.getId())
+                        .update("read", true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Toast.makeText(view.getContext(), "Aluno recusano no projeto", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                noticacoes.remove(position);
+                notifyDataSetChanged();
             }
         });
     }

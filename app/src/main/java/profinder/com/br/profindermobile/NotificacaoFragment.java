@@ -74,6 +74,7 @@ public class NotificacaoFragment extends Fragment {
     public void onStart() {
         super.onStart();
         fs.collection("notifications").whereEqualTo("projeto.uid", user.getUid())
+                .whereEqualTo("read", false)
                 .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
             @Override
             public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
