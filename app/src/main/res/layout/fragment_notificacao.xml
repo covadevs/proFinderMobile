@@ -6,12 +6,11 @@
     tools:context=".NotificacaoFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/notificacoes_list_fragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textSize="30sp"
-        android:textAlignment="center"
-        android:gravity="center"
-        android:text="Notificações" />
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
 
 </FrameLayout>

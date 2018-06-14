@@ -2,13 +2,10 @@ package profinder.com.br.profindermobile;
 
 public class Notificacao {
     private boolean isRead;
+    private Projeto projeto;
     private Usuario usuario;
 
     public Notificacao() {
-    }
-
-    public Notificacao(Usuario usuario) {
-        this.usuario = usuario;
         this.isRead = false;
     }
 
@@ -20,6 +17,16 @@ public class Notificacao {
         isRead = read;
     }
 
+
+    @Override
+    public String toString() {
+        return "Notificacao{" +
+                "isRead=" + isRead +
+                ", projeto=" + projeto +
+                ", usuario=" + usuario +
+                '}';
+    }
+
     public Usuario getUsuario() {
         return usuario;
     }
@@ -28,11 +35,12 @@ public class Notificacao {
         this.usuario = usuario;
     }
 
-    @Override
-    public String toString() {
-        return "Notificacao{" +
-                "isRead=" + isRead +
-                ", usuario=" + usuario +
-                '}';
+    public Projeto getProjeto() {
+        return projeto;
     }
+
+    public void setProjeto(Projeto projeto) {
+        this.projeto = projeto;
+    }
+
 }

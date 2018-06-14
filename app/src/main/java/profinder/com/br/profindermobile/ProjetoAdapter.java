@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,6 +42,8 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
     private View itemView;
     private FirebaseFirestore fs;
     private Usuario usuario;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
 
     public ProjetoAdapter(List<Projeto> projetos, Usuario usuario) {
         this.projetos = projetos;
@@ -54,6 +57,8 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
         itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.projeto_list_row, parent, false);
         fs = FirebaseFirestore.getInstance();
@@ -115,24 +120,23 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
             @Override
             public void onClick(View view) {
                 if(holder.mIncrever.getTag(R.id.increver_projeto).equals("undone")) {
-
-
+                    Notificacao notificacao = new Notificacao();
+                    notificacao.setUsuario(usuario);
+                    notificacao.setProjeto(projeto);
+                    Log.d("projeto", projeto.toString());
                     IconicsDrawable done = new IconicsDrawable(itemView.getContext()).icon(GoogleMaterial.Icon.gmd_done)
                             .color(itemView.getResources().getColor(R.color.md_white_1000));
                     Drawable doneIcon = new BitmapDrawable(itemView.getResources(), done.toBitmap());
                     holder.mIncrever.setIconResource(doneIcon);
                     holder.mIncrever.setFontIconSize(40);
                     holder.mIncrever.setIconPadding(4, 4, 4, 4);
-
                     holder.mIncrever.setTag(R.id.increver_projeto, "done");
-                    Notificacao notificacao = new Notificacao();
                     fs.collection("notifications").add(notificacao).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                         @Override
                         public void onSuccess(DocumentReference documentReference) {
-
+                            Toast.makeText(itemView.getContext(), "Inscrição realizada com sucesso", Toast.LENGTH_SHORT).show();
                         }
                     });
-
                 } else if(holder.mIncrever.getTag(R.id.increver_projeto).equals("done")){
                     IconicsDrawable inscrever = new IconicsDrawable(itemView.getContext()).icon(GoogleMaterial.Icon.gmd_add)
                             .color(itemView.getResources().getColor(R.color.md_white_1000));
@@ -141,6 +145,12 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
                     holder.mIncrever.setFontIconSize(40);
                     holder.mIncrever.setIconPadding(4,4,4,4);
                     holder.mIncrever.setTag(R.id.increver_projeto, "undone");
+                    fs.collection("notifications").document(projeto.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Toast.makeText(itemView.getContext(), "Inscrição removida com sucesso", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             }
         });

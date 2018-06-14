@@ -29,6 +29,7 @@ import java.util.List;
  */
 public class MeusProjetosFragment extends Fragment {
     private List<Projeto> projetos = new LinkedList<>();
+    private List<Notificacao> notificacoes = new LinkedList<>();
     private RecyclerView recyclerView;
     private ProjetoAdapter mAdapter;
     private FirebaseFirestore fs;

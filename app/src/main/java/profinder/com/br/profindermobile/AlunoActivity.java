@@ -79,15 +79,14 @@ public class AlunoActivity extends AppCompatActivity {
         this.isAlive = false;
         this.isBackgroundUpload = false;
 
-        Log.d("ROLE", getIntent().getExtras().getString("role"));
-        meusProjetosFragment.setRole(getIntent().getExtras().getString("role"));
-        setTitle("Meus Projetos");
+        meusProjetosFragment.setRole((Usuario) getIntent().getExtras().get("role"));
+        setTitle("Projetos");
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.framelayout_3, meusProjetosFragment)
                 .commit();
 
-        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Meus Projetos")
+        PrimaryDrawerItem item1 = new PrimaryDrawerItem().withIdentifier(1).withName("Projetos")
                 .withTextColor(getResources().getColor(R.color.md_white_1000))
                 .withSelectedTextColor(getResources().getColor(R.color.md_white_1000))
                 .withSelectedColor(getResources().getColor(R.color.colorPrimaryDark))
@@ -100,6 +99,7 @@ public class AlunoActivity extends AppCompatActivity {
                 .withSelectedIconColor(getResources().getColor(R.color.md_white_1000))
                 .withIconColor(getResources().getColor(R.color.md_white_1000));
         SecondaryDrawerItem item3 = new SecondaryDrawerItem().withIdentifier(3).withName("Notificações").withIcon(GoogleMaterial.Icon.gmd_notifications)
+                .withBadge("")
                 .withTextColor(getResources().getColor(R.color.md_white_1000))
                 .withSelectedTextColor(getResources().getColor(R.color.md_white_1000))
                 .withSelectedColor(getResources().getColor(R.color.colorPrimaryDark))
