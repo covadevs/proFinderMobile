@@ -145,8 +145,6 @@ public class BuscaAcitvity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(this, ProfessorActivity.class);
-        startActivity(intent);
         finish();
     }
 

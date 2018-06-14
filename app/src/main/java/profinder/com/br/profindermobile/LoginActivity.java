@@ -193,12 +193,12 @@ public class LoginActivity extends AppCompatActivity {
                                     usuario = documentSnapshot.toObject(Usuario.class);
                                     if(usuario.getType().equals("professor")) {
                                         Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
-                                        intent.putExtra("role", "professor");
+                                        intent.putExtra("role", usuario);
                                         startActivity(intent);
                                         finish();
                                     } else if (usuario.getType().equals("aluno")) {
                                         Intent intent = new Intent(LoginActivity.this, AlunoActivity.class);
-                                        intent.putExtra("role", "aluno");
+                                        intent.putExtra("role", usuario);
                                         startActivity(intent);
                                         finish();
                                     }

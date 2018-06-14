@@ -100,7 +100,6 @@ public class ProfessorActivity extends AppCompatActivity {
                 .withSelectedIconColor(getResources().getColor(R.color.md_white_1000))
                 .withIconColor(getResources().getColor(R.color.md_white_1000));
         SecondaryDrawerItem item3 = new SecondaryDrawerItem().withIdentifier(3).withName("Notificações").withIcon(GoogleMaterial.Icon.gmd_notifications)
-                .withBadge("")
                 .withTextColor(getResources().getColor(R.color.md_white_1000))
                 .withSelectedTextColor(getResources().getColor(R.color.md_white_1000))
                 .withSelectedColor(getResources().getColor(R.color.colorPrimaryDark))
@@ -400,7 +399,6 @@ public class ProfessorActivity extends AppCompatActivity {
                 materialSearchView.closeSearch();
                 Intent intent = new Intent(ProfessorActivity.this, BuscaAcitvity.class);
                 startActivity(intent);
-                finish();
             }
 
             @Override

@@ -76,7 +76,6 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
                 Intent intent = new Intent(holder.itemView.getContext(), EditarProjetoActivity.class);
                 intent.putExtra("projeto", projeto);
                 holder.itemView.getContext().startActivity(intent);
-
             }
         });
 
