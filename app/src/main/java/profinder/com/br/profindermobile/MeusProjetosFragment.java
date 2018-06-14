@@ -127,8 +127,7 @@ public class MeusProjetosFragment extends Fragment {
                     }
                 });
             } else if (role.equalsIgnoreCase("aluno")) {
-                //TODO SOMETHING
-                Log.d("ROLE", "ENTROU");
+                
             }
         });
 

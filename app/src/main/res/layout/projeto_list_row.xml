@@ -16,6 +16,22 @@
     android:paddingTop="@dimen/row_padding_vertical">
 
 
+    <mehdi.sakout.fancybuttons.FancyButton
+        android:id="@+id/increver_projeto"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        app:layout_constraintStart_toEndOf="@+id/editarProjeto"
+        fancy:fb_defaultColor="@color/md_green_400"
+        fancy:fb_focusColor="@color/md_green_800"
+        fancy:fb_radius="50dp"
+        fancy:fb_text=""
+        fancy:layout_constraintBottom_toBottomOf="parent"
+        fancy:layout_constraintEnd_toStartOf="@+id/deletarProjeto"
+        fancy:layout_constraintStart_toEndOf="@+id/titulo_projeto"
+        fancy:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/titulo_projeto"
         android:layout_width="0dp"

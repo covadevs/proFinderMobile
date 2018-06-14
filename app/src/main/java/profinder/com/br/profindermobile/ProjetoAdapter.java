@@ -14,7 +14,12 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.mikepenz.google_material_typeface_library.GoogleMaterial;
 import com.mikepenz.iconics.IconicsDrawable;
@@ -27,6 +32,11 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
 
     private List<Projeto> projetos;
     private MaterialDialog materialDialog;
+    private FirebaseAuth mAuth;
+    private FirebaseUser mUser;
+    private FirebaseFirestore fs;
+    private View itemView;
+    private Usuario usuario;
 
     public ProjetoAdapter(List<Projeto> projetos) {
         this.projetos = projetos;
@@ -35,8 +45,25 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.projeto_list_row, parent, false);
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
+        fs = FirebaseFirestore.getInstance();
+        fs.collection("users").document(mUser.getUid()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot snapshot) {
+                usuario = snapshot.toObject(Usuario.class);
+                itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.projeto_list_row, parent, false);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                usuario = new Usuario();
+                itemView = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.projeto_list_row, parent, false);
+            }
+        });
+
         return new MyViewHolder(itemView);
     }
 
@@ -90,6 +117,13 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
                 materialDialog.show();
             }
         });
+
+        holder.mIncrever.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     @Override
@@ -101,25 +135,44 @@ public class ProjetoAdapter extends RecyclerView.Adapter<ProjetoAdapter.MyViewHo
         public TextView titulo;
         public FancyButton mEditar;
         public FancyButton mDeletar;
+        public FancyButton mIncrever;
 
         public MyViewHolder(View itemView) {
             super(itemView);
+
             titulo = itemView.findViewById(R.id.titulo_projeto);
             mEditar = itemView.findViewById(R.id.editarProjeto);
             mDeletar = itemView.findViewById(R.id.deletarProjeto);
-            IconicsDrawable editar = new IconicsDrawable(itemView.getContext()).icon(GoogleMaterial.Icon.gmd_edit)
-                    .color(itemView.getResources().getColor(R.color.md_white_1000));
-            Drawable editarIcon = new BitmapDrawable(itemView.getResources(), editar.toBitmap());
-            mEditar.setIconResource(editarIcon);
-            mEditar.setFontIconSize(40);
-            mEditar.setIconPadding(4,4,4,4);
+            mIncrever = itemView.findViewById(R.id.increver_projeto);
 
-            IconicsDrawable deletar = new IconicsDrawable(itemView.getContext()).icon(GoogleMaterial.Icon.gmd_close)
-                    .color(itemView.getResources().getColor(R.color.md_white_1000));
-            Drawable deletarIcon = new BitmapDrawable(itemView.getResources(), deletar.toBitmap());
-            mDeletar.setIconResource(deletarIcon);
-            mDeletar.setFontIconSize(40);
-            mDeletar.setIconPadding(4,4,4,4);
+            if(usuario.getType().equalsIgnoreCase("professor")) {
+                IconicsDrawable editar = new IconicsDrawable(itemView.getContext()).icon(GoogleMaterial.Icon.gmd_edit)
+                        .color(itemView.getResources().getColor(R.color.md_white_1000));
+                Drawable editarIcon = new BitmapDrawable(itemView.getResources(), editar.toBitmap());
+                mEditar.setIconResource(editarIcon);
+                mEditar.setFontIconSize(40);
+                mEditar.setIconPadding(4,4,4,4);
+
+                IconicsDrawable deletar = new IconicsDrawable(itemView.getContext()).icon(GoogleMaterial.Icon.gmd_close)
+                        .color(itemView.getResources().getColor(R.color.md_white_1000));
+                Drawable deletarIcon = new BitmapDrawable(itemView.getResources(), deletar.toBitmap());
+                mDeletar.setIconResource(deletarIcon);
+                mDeletar.setFontIconSize(40);
+                mDeletar.setIconPadding(4,4,4,4);
+            } else if(usuario.getType().equalsIgnoreCase("aluno")) {
+                mIncrever.setVisibility(View.VISIBLE);
+                mEditar.setVisibility(View.GONE);
+                mDeletar.setVisibility(View.GONE);
+
+                IconicsDrawable inscrever = new IconicsDrawable(itemView.getContext()).icon(GoogleMaterial.Icon.gmd_add)
+                        .color(itemView.getResources().getColor(R.color.md_white_1000));
+                Drawable increverIcon = new BitmapDrawable(itemView.getResources(), inscrever.toBitmap());
+                mIncrever.setIconResource(increverIcon);
+                mIncrever.setFontIconSize(40);
+                mIncrever.setIconPadding(4,4,4,4);
+            }
+
+
         }
     }
 }
