@@ -18,6 +18,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.shawnlin.numberpicker.NumberPicker;
 
+import java.util.LinkedList;
+
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 
 public class CadastroProjetoActivity extends AppCompatActivity {
@@ -59,6 +61,7 @@ public class CadastroProjetoActivity extends AppCompatActivity {
                     projeto.setCoordenador(CoodenadorProjeto.getText().toString());
                     projeto.setDescricao(DescricaoProjeto.getText().toString());
                     projeto.setQntAlunos(qntVagas.getValue());
+                    projeto.setAlunos(new LinkedList<>());
                     TarefaCadastrarProjeto tarefaCadastrarProjeto = new TarefaCadastrarProjeto();
                     tarefaCadastrarProjeto.execute(projeto);
                 }

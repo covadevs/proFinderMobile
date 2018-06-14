@@ -42,13 +42,17 @@
 
         <activity
             android:name=".EditarProjetoActivity"
-            android:theme="@style/apptheme"></activity>
+            android:theme="@style/apptheme" />
         <activity
             android:name=".ConfiguracoesActivity"
-            android:theme="@style/apptheme"></activity>
+            android:theme="@style/apptheme" />
         <activity
             android:name=".BuscaAcitvity"
             android:label="@string/title_activity_busca_acitvity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".AlunoActivity"
+            android:label="@string/title_activity_aluno"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 

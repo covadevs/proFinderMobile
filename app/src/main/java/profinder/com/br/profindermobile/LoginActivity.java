@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -27,6 +28,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.novoda.merlin.Merlin;
 import com.novoda.merlin.registerable.connection.Connectable;
 import com.novoda.merlin.registerable.disconnection.Disconnectable;
+
+import java.util.concurrent.CompletableFuture;
 
 import br.com.simplepass.loading_button_lib.customViews.CircularProgressButton;
 
@@ -55,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onConnect() {
                 if(!conectado) {
-                    snackbar = Snackbar.make(findViewById(R.id.login_layout), "BD Conectado", Snackbar.LENGTH_SHORT);
+                    snackbar = Snackbar.make(findViewById(R.id.login_layout), "Conectado", Snackbar.LENGTH_SHORT);
                     snackbar.show();
                 }
                 conectado = true;
@@ -66,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onDisconnect() {
                 conectado = false;
-                snackbar = Snackbar.make(findViewById(R.id.login_layout), "Falha na conexão", Snackbar.LENGTH_INDEFINITE);
+                snackbar = Snackbar.make(findViewById(R.id.login_layout), "Sem conexão", Snackbar.LENGTH_INDEFINITE);
                 snackbar.show();
             }
         });
@@ -125,8 +128,23 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         user = mAuth.getCurrentUser();
         if(user != null && user.isEmailVerified()) {
-            Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
-            startActivity(intent);
+            mUsuario.setEnabled(false);
+            mSenha.setEnabled(false);
+            circularProgressButton.setEnabled(false);
+            dr = fs.collection("users").document(user.getUid());
+            dr.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot snapshot) {
+                    Usuario usuario = snapshot.toObject(Usuario.class);
+                    if(usuario.getType().equalsIgnoreCase("professor")) {
+                        Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
+                        startActivity(intent);
+                    } else if(usuario.getType().equalsIgnoreCase("aluno")) {
+                        Intent intent = new Intent(LoginActivity.this, AlunoActivity.class);
+                        startActivity(intent);
+                    }
+                }
+            });
         }
     }
 
@@ -139,6 +157,11 @@ public class LoginActivity extends AppCompatActivity {
 
         if(!Patterns.EMAIL_ADDRESS.matcher(mUsuario.getText()).matches() && !TextUtils.isEmpty(mUsuario.getText())) {
             mUsuario.setError("E-mail inválido");
+            vazio = true;
+        }
+
+        if(!mUsuario.getText().toString().contains(".ufpb.br")) {
+            mUsuario.setError("E-mail não institucional");
             vazio = true;
         }
 
@@ -168,6 +191,10 @@ public class LoginActivity extends AppCompatActivity {
                                     usuario = documentSnapshot.toObject(Usuario.class);
                                     if(usuario.getType().equals("professor")) {
                                         Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    } else if (usuario.getType().equals("aluno")) {
+                                        Intent intent = new Intent(LoginActivity.this, AlunoActivity.class);
                                         startActivity(intent);
                                         finish();
                                     }

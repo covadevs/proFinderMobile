@@ -1,6 +1,7 @@
 package profinder.com.br.profindermobile;
 
 import java.io.Serializable;
+import java.util.List;
 
 class Projeto implements Serializable {
     private String id;
@@ -10,6 +11,7 @@ class Projeto implements Serializable {
     private String coordenador;
     private String descricao;
     private int qntAlunos;
+    private List<Usuario> alunos;
 
     public Projeto() {}
 
@@ -67,6 +69,14 @@ class Projeto implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public List<Usuario> getAlunos() {
+        return alunos;
+    }
+
+    public void setAlunos(List<Usuario> alunos) {
+        this.alunos = alunos;
     }
 
     @Override

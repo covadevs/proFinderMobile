@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,12 +16,14 @@ import android.widget.ProgressBar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +44,7 @@ public class MeusProjetosFragment extends Fragment {
     private FirebaseAuth mAuth;
     private FirebaseUser mUser;
     private ProgressBar progressBar;
+    private String role;
 //    private CarregarProjetos carregarProjetos;
 
     public MeusProjetosFragment() {
@@ -58,9 +62,6 @@ public class MeusProjetosFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        fs = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
-        mUser = mAuth.getCurrentUser();
 
 //        carregarProjetos = new CarregarProjetos();
 
@@ -87,28 +88,47 @@ public class MeusProjetosFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        fs.collection("projects").whereEqualTo("uid", mUser.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
-            @Override
-            public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots,
-                                @javax.annotation.Nullable FirebaseFirestoreException e) {
-                if(e != null) {
-                    return;
-                }
+        fs = FirebaseFirestore.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        mUser = mAuth.getCurrentUser();
 
-                projetos.clear();
-                for(QueryDocumentSnapshot doc : queryDocumentSnapshots) {
-                    Projeto p = new Projeto();
-                    p.setNome(doc.getString("nome"));
-                    p.setArea(doc.getString("area"));
-                    p.setCoordenador(doc.getString("coordenador"));
-                    p.setQntAlunos(doc.getLong("qntAlunos").intValue());
-                    p.setDescricao(doc.getString("descricao"));
-                    p.setUID(doc.getString("uid"));
-                    p.setId(doc.getId());
-                    projetos.add(p);
-                }
+        fs.collection("users").document(mUser.getUid()).addSnapshotListener((snapshot, e) -> {
+            if(e != null) {
+                return;
+            }
 
-                mAdapter.notifyDataSetChanged();
+            role = snapshot.getString("type");
+            Log.d("ROLE", role);
+            if(role.equalsIgnoreCase("professor")) {
+                Log.d("ROLE", "ENTROU TBM");
+                fs.collection("projects").whereEqualTo("uid", mUser.getUid()).addSnapshotListener(new EventListener<QuerySnapshot>() {
+                    @Override
+                    public void onEvent(@javax.annotation.Nullable QuerySnapshot queryDocumentSnapshots,
+                                        @javax.annotation.Nullable FirebaseFirestoreException e) {
+                        if (e != null) {
+                            return;
+                        }
+
+                        projetos.clear();
+                        for (QueryDocumentSnapshot doc : queryDocumentSnapshots) {
+                            Projeto p = new Projeto();
+                            p.setNome(doc.getString("nome"));
+                            p.setArea(doc.getString("area"));
+                            p.setCoordenador(doc.getString("coordenador"));
+                            p.setQntAlunos(doc.getLong("qntAlunos").intValue());
+                            p.setDescricao(doc.getString("descricao"));
+                            p.setUID(doc.getString("uid"));
+                            p.setAlunos((ArrayList<Usuario>) doc.get("alunos"));
+                            p.setId(doc.getId());
+                            projetos.add(p);
+                        }
+
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
+            } else if (role.equalsIgnoreCase("aluno")) {
+                //TODO SOMETHING
+                Log.d("ROLE", "ENTROU");
             }
         });
 

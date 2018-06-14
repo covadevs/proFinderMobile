@@ -117,6 +117,11 @@ public class CadastroUsuarioActivity extends AppCompatActivity {
             vazio = true;
         }
 
+        if(!mEmail.getText().toString().contains(".ufpb.br")) {
+            mEmail.setError("E-mail deve pertencer a UFPB");
+            vazio = true;
+        }
+
         if(mSenha.getText().toString().isEmpty()) {
             mSenha.setError("Campo vazio!");
             vazio = true;
