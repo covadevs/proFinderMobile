@@ -115,6 +115,7 @@ public class CadastroProjetoActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == event.KEYCODE_BACK) {
             Intent intent = new Intent(CadastroProjetoActivity.this, ProfessorActivity.class);
+            intent.putExtra("role", "professor");
             startActivity(intent);
             finish();
         }

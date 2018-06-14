@@ -138,9 +138,11 @@ public class LoginActivity extends AppCompatActivity {
                     Usuario usuario = snapshot.toObject(Usuario.class);
                     if(usuario.getType().equalsIgnoreCase("professor")) {
                         Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
+                        intent.putExtra("role", usuario);
                         startActivity(intent);
                     } else if(usuario.getType().equalsIgnoreCase("aluno")) {
                         Intent intent = new Intent(LoginActivity.this, AlunoActivity.class);
+                        intent.putExtra("role", usuario);
                         startActivity(intent);
                     }
                 }
@@ -191,10 +193,12 @@ public class LoginActivity extends AppCompatActivity {
                                     usuario = documentSnapshot.toObject(Usuario.class);
                                     if(usuario.getType().equals("professor")) {
                                         Intent intent = new Intent(LoginActivity.this, ProfessorActivity.class);
+                                        intent.putExtra("role", "professor");
                                         startActivity(intent);
                                         finish();
                                     } else if (usuario.getType().equals("aluno")) {
                                         Intent intent = new Intent(LoginActivity.this, AlunoActivity.class);
+                                        intent.putExtra("role", "aluno");
                                         startActivity(intent);
                                         finish();
                                     }

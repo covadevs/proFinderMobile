@@ -22,14 +22,15 @@
         android:layout_height="40dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        app:layout_constraintStart_toEndOf="@+id/editarProjeto"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/titulo_projeto"
         fancy:fb_defaultColor="@color/md_green_400"
         fancy:fb_focusColor="@color/md_green_800"
         fancy:fb_radius="50dp"
         fancy:fb_text=""
         fancy:layout_constraintBottom_toBottomOf="parent"
         fancy:layout_constraintEnd_toStartOf="@+id/deletarProjeto"
-        fancy:layout_constraintStart_toEndOf="@+id/titulo_projeto"
         fancy:layout_constraintTop_toTopOf="parent" />
 
     <TextView

@@ -14,6 +14,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,7 +80,10 @@ public class ProfessorActivity extends AppCompatActivity {
         this.isAlive = false;
         this.isBackgroundUpload = false;
 
+        Log.d("ROLE", getIntent().getExtras().getString("role"));
+        meusProjetosFragment.setRole(getIntent().getExtras().getString("role"));
         setTitle("Meus Projetos");
+        meusProjetosFragment.setRole(getIntent().getStringExtra("role"));
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.framelayout, meusProjetosFragment)
@@ -98,6 +102,7 @@ public class ProfessorActivity extends AppCompatActivity {
                 .withSelectedIconColor(getResources().getColor(R.color.md_white_1000))
                 .withIconColor(getResources().getColor(R.color.md_white_1000));
         SecondaryDrawerItem item3 = new SecondaryDrawerItem().withIdentifier(3).withName("Notificações").withIcon(GoogleMaterial.Icon.gmd_notifications)
+                .withBadge("badge_notifications")
                 .withTextColor(getResources().getColor(R.color.md_white_1000))
                 .withSelectedTextColor(getResources().getColor(R.color.md_white_1000))
                 .withSelectedColor(getResources().getColor(R.color.colorPrimaryDark))
@@ -204,6 +209,9 @@ public class ProfessorActivity extends AppCompatActivity {
                     }
                 })
                 .build();
+
+
+
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);

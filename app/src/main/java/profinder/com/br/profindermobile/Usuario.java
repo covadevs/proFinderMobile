@@ -1,9 +1,10 @@
 package profinder.com.br.profindermobile;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Usuario {
+public class Usuario implements Serializable{
     private String nome;
     private String email;
     private String senha;
@@ -17,6 +18,10 @@ public class Usuario {
         this.email = email;
         this.senha = senha;
         this.matricula = matricula;
+        this.type = type;
+    }
+
+    public Usuario(String type) {
         this.type = type;
     }
 

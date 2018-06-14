@@ -13,6 +13,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -78,6 +79,8 @@ public class AlunoActivity extends AppCompatActivity {
         this.isAlive = false;
         this.isBackgroundUpload = false;
 
+        Log.d("ROLE", getIntent().getExtras().getString("role"));
+        meusProjetosFragment.setRole(getIntent().getExtras().getString("role"));
         setTitle("Meus Projetos");
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()

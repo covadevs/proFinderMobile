@@ -36,6 +36,7 @@ dependencies {
     implementation 'com.annimon:stream:1.2.0'
     implementation 'br.com.simplepass:loading-button-android:1.12.1'
     implementation 'com.ogaclejapan.smarttablayout:library:1.6.1@aar'
+    implementation 'com.ea.async:ea-async:1.1.1'
 
     implementation('com.mikepenz:materialdrawer:6.0.7@aar') {
         transitive = true
